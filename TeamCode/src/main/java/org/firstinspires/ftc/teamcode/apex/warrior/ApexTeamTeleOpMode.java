@@ -14,20 +14,8 @@ public class ApexTeamTeleOpMode extends LinearOpMode {
 
     /* Declare OpMode members */
     RobotHardwareConfigurator myRobotHW = new RobotHardwareConfigurator();
-    private static final double shooterDCMotorPowerScaleFactor = 0.38;
-    private static final double transferDCMotorPowerScale = 0.9;
-    private static final double intakeDCMotorPowerScale = 0.9;
-
-    // Servo positions (0.0 to 1.0) Rotator Assembly
-    private static final double SHOOTER_ROTATOR_SERVO_START_POS = 0.36;  // starting position
-    private static final double SHOOTER_ROTATOR_SERVO_END_POS = 0.43;  // 150° away from start
     private static final double STEP = 0.01;  // // Step rate controls how fast the servo moves (smaller = slower)
-    private final double FEEDER_SERVO_POS_0_DEG = 0.0;   // represents 0 degrees
-    private final double FEEDER_SERVO_POS_120_DEG = 0.07; // approx 120 degrees on a 5-turn servo
-    private final double STOPPER_SERVO_POS_INITIAL_GATE = 0.60;
-    private final double STOPPER_SERVO_POS_OPEN_GATE = 0.70;
     private boolean stopperButtonStateForFirstTime = false;
-
     private DcMotor frontLeftChassisDC;
     private DcMotor frontRightChassisDC;
     private DcMotor backLeftChassisDC;
@@ -39,7 +27,6 @@ public class ApexTeamTeleOpMode extends LinearOpMode {
     private Servo shooterMechRotatorServo;
     private Servo feederEnablerServo;
     private Servo specStopperServo;
-
     private boolean lastLeftTriggerState = false;
     private boolean lastRightTriggerState = false;
     private double rotorServoCurrentPosition;
@@ -69,7 +56,7 @@ public class ApexTeamTeleOpMode extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            specStopperServo.setPosition(STOPPER_SERVO_POS_INITIAL_GATE);
+            specStopperServo.setPosition(ServoMotorConstant.STOPPER_SERVO_POS_INITIAL_GATE);
             // Current trigger states (threshold of 0.5)
             boolean leftTriggerPressed  = gamepad2.left_trigger  > 0.5;
             boolean rightTriggerPressed = gamepad2.right_trigger > 0.5;
@@ -98,14 +85,14 @@ public class ApexTeamTeleOpMode extends LinearOpMode {
             }
             // D-Pad Up → Move to end (150°)
             if (gamepad1.dpad_up) {
-                rotorServoCurrentPosition = SHOOTER_ROTATOR_SERVO_END_POS;
+                rotorServoCurrentPosition = ServoMotorConstant.SHOOTER_ROTATOR_SERVO_END_POS;
                 telemetry.addData("D-Pad Up clicked!", rotorServoCurrentPosition);
                 telemetry.update();
                 shooterMechRotatorServo.setPosition(rotorServoCurrentPosition);
             }
             // D-Pad Down → Move back to start
             if (gamepad1.dpad_down) {
-                rotorServoCurrentPosition = SHOOTER_ROTATOR_SERVO_START_POS;
+                rotorServoCurrentPosition = ServoMotorConstant.SHOOTER_ROTATOR_SERVO_START_POS;
                 telemetry.addData("D-Pad Down clicked!", rotorServoCurrentPosition);
                 telemetry.update();
                 shooterMechRotatorServo.setPosition(rotorServoCurrentPosition);
@@ -132,7 +119,7 @@ public class ApexTeamTeleOpMode extends LinearOpMode {
             }
             /* GamePade 2 -> Transfer DC Motor movement - STOP */
             if (gamepad2.a) {
-                stopTransferMechDCMotor();
+                runTransferMechDCMotorInReverse();
             }
             /* GamePade 2 -> Shooter DC Motor movement - START */
             if (gamepad2.dpad_up) {
@@ -162,7 +149,7 @@ public class ApexTeamTeleOpMode extends LinearOpMode {
         telemetry.update();
         rotorServoCurrentPosition = rotorServoCurrentPosition - STEP;
         // Limit within defined range
-        rotorServoCurrentPosition = Math.max(SHOOTER_ROTATOR_SERVO_START_POS, rotorServoCurrentPosition);// Set new position
+        rotorServoCurrentPosition = Math.max(ServoMotorConstant.SHOOTER_ROTATOR_SERVO_START_POS, rotorServoCurrentPosition);// Set new position
         // Set new position
         shooterMechRotatorServo.setPosition(rotorServoCurrentPosition);
         telemetry.addData("LEFT trigger clicked: rotorServoCurrentPosition", rotorServoCurrentPosition);
@@ -175,7 +162,7 @@ public class ApexTeamTeleOpMode extends LinearOpMode {
         telemetry.update();
         rotorServoCurrentPosition = rotorServoCurrentPosition + STEP;
         // Limit within defined range
-        rotorServoCurrentPosition = Math.min(SHOOTER_ROTATOR_SERVO_END_POS, rotorServoCurrentPosition);// Set new position
+        rotorServoCurrentPosition = Math.min(ServoMotorConstant.SHOOTER_ROTATOR_SERVO_END_POS, rotorServoCurrentPosition);// Set new position
         shooterMechRotatorServo.setPosition(rotorServoCurrentPosition);
         telemetry.addData("RIGHT trigger clicked: rotorServoCurrentPosition", rotorServoCurrentPosition);
         telemetry.update();
@@ -187,9 +174,9 @@ public class ApexTeamTeleOpMode extends LinearOpMode {
         if(!stopperButtonStateForFirstTime) {
             stopperButtonStateForFirstTime = true;
         } else{
-            specStopperServo.setPosition(STOPPER_SERVO_POS_OPEN_GATE);
+            specStopperServo.setPosition(ServoMotorConstant.STOPPER_SERVO_POS_OPEN_GATE);
         }
-        feederEnablerServo.setPosition(FEEDER_SERVO_POS_120_DEG);
+        feederEnablerServo.setPosition(ServoMotorConstant.FEEDER_SERVO_POS_120_DEG);
         telemetry.addData("stopperButtonStateForFirstTime flag:", stopperButtonStateForFirstTime);
         telemetry.addData("feederEnablerServo Position", feederEnablerServo.getPosition());
         telemetry.addData("specStopperServo Position", specStopperServo.getPosition());
@@ -197,8 +184,8 @@ public class ApexTeamTeleOpMode extends LinearOpMode {
         telemetry.update();
         sleep(400); // adjust as needed for speed
         specStopperServo.setDirection(Servo.Direction.REVERSE);
-        specStopperServo.setPosition(STOPPER_SERVO_POS_OPEN_GATE);
-        feederEnablerServo.setPosition(FEEDER_SERVO_POS_0_DEG);
+        specStopperServo.setPosition(ServoMotorConstant.STOPPER_SERVO_POS_OPEN_GATE);
+        feederEnablerServo.setPosition(ServoMotorConstant.FEEDER_SERVO_POS_0_DEG);
         telemetry.addData("feederEnablerServo Position", feederEnablerServo.getPosition());
         telemetry.addData("specStopperServo Position", specStopperServo.getPosition());
         telemetry.addData("specStopperServo direction", specStopperServo.getDirection());
@@ -288,9 +275,9 @@ public class ApexTeamTeleOpMode extends LinearOpMode {
         specStopperServo = myRobotHW.getSpecStopperServo();
         // Initialize shooterMechRotatorServo & feederEnablerServo to the starting position
         specStopperServo.setDirection(Servo.Direction.FORWARD);
-        shooterMechRotatorServo.setPosition(SHOOTER_ROTATOR_SERVO_START_POS);
-        feederEnablerServo.setPosition(FEEDER_SERVO_POS_0_DEG);
-        specStopperServo.setPosition(STOPPER_SERVO_POS_INITIAL_GATE);
+        shooterMechRotatorServo.setPosition(ServoMotorConstant.SHOOTER_ROTATOR_SERVO_START_POS);
+        feederEnablerServo.setPosition(ServoMotorConstant.FEEDER_SERVO_POS_0_DEG);
+        specStopperServo.setPosition(ServoMotorConstant.STOPPER_SERVO_POS_INITIAL_GATE);
         telemetry.addData("Servo initiateServoMotors:", "Configuration Completed");
         telemetry.addLine("Use triggers to move shooterMechRotatorServo");
         telemetry.addLine("Right Trigger → upward movement");
@@ -332,9 +319,9 @@ public class ApexTeamTeleOpMode extends LinearOpMode {
     // Function to give scaled power to both shooter DC motors(opposite rotation)
     private void startShooterDCMotors() {
         // Ensure shooterDCPowerScale stays between 0 and 1
-        leftShooterDC.setPower(shooterDCMotorPowerScaleFactor);
-        rightShooterDC.setPower(shooterDCMotorPowerScaleFactor);
-        telemetry.addData("DcMotor shooterDCPowerScale", shooterDCMotorPowerScaleFactor);
+        leftShooterDC.setPower(DcMotorConstant.shooterDCMotorPowerScaleFactor);
+        rightShooterDC.setPower(DcMotorConstant.shooterDCMotorPowerScaleFactor);
+        telemetry.addData("DcMotor shooterDCPowerScale", DcMotorConstant.shooterDCMotorPowerScaleFactor);
         telemetry.addData("DcMotor LeftShooter Power", leftShooterDC.getPower());
         telemetry.addData("DcMotor RightShooter Power", rightShooterDC.getPower());
         telemetry.update();
@@ -345,10 +332,11 @@ public class ApexTeamTeleOpMode extends LinearOpMode {
         transferMechDC.setDirection(DcMotor.Direction.FORWARD);
         telemetry.addData("DcMotor DirectionTransfer", transferMechDC.getDirection());
         telemetry.update();
-        startTransferMechDCMotor(transferDCMotorPowerScale);
+        startTransferMechDCMotor(DcMotorConstant.transferDCMotorPowerScale);
     }
 
     // Function to give scaled power to Transfer DC Motor
+
     private void startTransferMechDCMotor(double transferDCPowerScale) {
         // Ensure transferDCPowerScale stays between 0 and 1
         transferDCPowerScale = Math.max(0, Math.min(transferDCPowerScale, 1));
@@ -363,7 +351,7 @@ public class ApexTeamTeleOpMode extends LinearOpMode {
         intakeMechDC.setDirection(DcMotor.Direction.FORWARD);
         telemetry.addData("DcMotor DirectionIntake", intakeMechDC.getDirection());
         telemetry.update();
-        startIntakeMechDCMotor(intakeDCMotorPowerScale);
+        startIntakeMechDCMotor(DcMotorConstant.intakeDCMotorPowerScale);
     }
 
     // Function to give scaled power to Intake DC Motor
@@ -374,6 +362,14 @@ public class ApexTeamTeleOpMode extends LinearOpMode {
         telemetry.addData("DcMotor intakeDCPowerScale", intakeDCPowerScale);
         telemetry.addData("DcMotor Intake Power", intakeMechDC.getPower());
         telemetry.update();
+    }
+
+    // Function to run Transfer DC Motor at scaled power in Reverse direction
+    private void runTransferMechDCMotorInReverse() {
+        transferMechDC.setDirection(DcMotor.Direction.REVERSE);
+        telemetry.addData("DcMotor DirectionTransfer", transferMechDC.getDirection());
+        telemetry.update();
+        startTransferMechDCMotor(DcMotorConstant.transferDCMotorPowerScale);
     }
 
     private void stopAllDCMotors() {

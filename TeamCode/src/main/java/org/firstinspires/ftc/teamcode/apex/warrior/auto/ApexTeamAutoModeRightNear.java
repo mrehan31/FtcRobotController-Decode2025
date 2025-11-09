@@ -22,7 +22,7 @@ public class ApexTeamAutoModeRightNear extends LinearOpMode {
     GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
     RobotHardwareConfigurator myRobotHW = new RobotHardwareConfigurator();
     private static final double shooterDCMotorPowerScaleFactor = 0.395;
-    private static final double transferDCMotorPowerScale = 0.9;
+    private static final double transferDCMotorPowerScale = 0.75;
     private static final double intakeDCMotorPowerScale = 0.9;
 
     // Servo positions (0.0 to 1.0) Rotator Assembly
@@ -33,7 +33,7 @@ public class ApexTeamAutoModeRightNear extends LinearOpMode {
     private static final double STEP = 0.01;  // // Step rate controls how fast the servo moves (smaller = slower)
     private final double FEEDER_SERVO_POS_0_DEG = 0.0;   // represents 0 degrees
     private final double FEEDER_SERVO_POS_120_DEG = 0.07; // approx 120 degrees on a 5-turn servo
-    private final double STOPPER_SERVO_POS_INITIAL_GATE = 0.60;
+    private final double STOPPER_SERVO_POS_INITIAL_GATE = 0.55;
     private final double STOPPER_SERVO_POS_OPEN_GATE = 0.70;
     private boolean stopperButtonStateForFirstTime = false;
 
