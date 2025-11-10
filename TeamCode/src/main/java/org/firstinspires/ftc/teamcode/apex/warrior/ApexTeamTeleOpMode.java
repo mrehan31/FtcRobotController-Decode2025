@@ -119,7 +119,7 @@ public class ApexTeamTeleOpMode extends LinearOpMode {
             }
             /* GamePade 2 -> Transfer DC Motor movement - STOP */
             if (gamepad2.a) {
-                runTransferMechDCMotorInReverse();
+                stopTransferMechDCMotor();
             }
             /* GamePade 2 -> Shooter DC Motor movement - START */
             if (gamepad2.dpad_up) {

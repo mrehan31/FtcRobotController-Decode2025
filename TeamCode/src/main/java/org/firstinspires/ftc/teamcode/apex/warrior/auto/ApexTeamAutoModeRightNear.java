@@ -57,7 +57,7 @@ public class ApexTeamAutoModeRightNear extends LinearOpMode {
 
     PIDController xPID = new PIDController(0.01, 0.01, 0.0);
     PIDController yPID = new PIDController(0.01, 0.01, 0.0);
-    PIDController thetaPID = new PIDController(0.01, 0.01, 0.0);
+    PIDController thetaPID = new PIDController(0.015, 0.01, 0.0);
 
     @Override
     public void runOpMode() throws InterruptedException {

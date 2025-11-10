@@ -21,8 +21,8 @@ import java.util.Locale;
 public class ApexTeamAutoModeLeftNear extends LinearOpMode {
     GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
     RobotHardwareConfigurator myRobotHW = new RobotHardwareConfigurator();
-    private static final double shooterDCMotorPowerScaleFactor = 0.395;
-    private static final double transferDCMotorPowerScale = 0.75;
+    private static final double shooterDCMotorPowerScaleFactor = 0.40;
+    private static final double transferDCMotorPowerScale = 0.65;
     private static final double intakeDCMotorPowerScale = 0.9;
 
     // Servo positions (0.0 to 1.0) Rotator Assembly
@@ -57,7 +57,7 @@ public class ApexTeamAutoModeLeftNear extends LinearOpMode {
 
     PIDController xPID = new PIDController(0.01, 0.01, 0.0);
     PIDController yPID = new PIDController(0.01, 0.01, 0.0);
-    PIDController thetaPID = new PIDController(0.01, 0.01, 0.0);
+    PIDController thetaPID = new PIDController(0.015, 0.01, 0.0);
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -139,20 +139,20 @@ public class ApexTeamAutoModeLeftNear extends LinearOpMode {
                     y_in_botAxis, heading_deg);
             telemetry.addData("Position", data);
             Pose2d target;
-            target = new Pose2d(1350, 0.0, 2.0);
+            target = new Pose2d(1350, 0.0, -2.0);
 
             long curTime = System.currentTimeMillis();
             if (curTime - time_phase2 > 9000 ) {
                 target = new Pose2d(1350, 0.0, -132);
             }
             if (curTime - time_phase2 > 12000 ) {
-                target = new Pose2d(710, -850, -132);
+                target = new Pose2d(710, -900, -132);
             }
             if (curTime - time_phase2 > 16000 ) {
-                target = new Pose2d(1350, 0.0, 2.0);
+                target = new Pose2d(1350, 0.0, -2.0);
             }
             if (curTime - time_phase2 > 22000 ) {
-                target = new Pose2d(1320, 0.0, -80);
+                target = new Pose2d(1400, 0.0, -100);
             }
             if (curTime - time_phase2 > 25000 ) {
                 target = new Pose2d(1350, -1000, -135);
@@ -172,20 +172,20 @@ public class ApexTeamAutoModeLeftNear extends LinearOpMode {
             double vy = yPID.update(errorY, dt);
             double omega = thetaPID.update(errorTheta, dt);
 
-            if(vx > 0.2)
-                vx = 0.2;
-            if(vx < -0.2)
-                vx = -0.2;
+            if(vx > 0.22)
+                vx = 0.22;
+            if(vx < -0.22)
+                vx = -0.22;
 
-            if(vy > 0.2)
-                vy = 0.2;
-            if(vy < -0.2)
-                vy = -0.2;
+            if(vy > 0.22)
+                vy = 0.22;
+            if(vy < -0.22)
+                vy = -0.22;
 
-            if(omega > 0.2)
-                omega = 0.2;
-            if(omega < -0.2)
-                omega = -0.2;
+            if(omega > 0.22)
+                omega = 0.22;
+            if(omega < -0.22)
+                omega = -0.22;
 
             data = String.format(Locale.US, "{Vx: %.3f, Vy: %.3f, Heading Cmd: %.3f}", vx,
                     vy, omega);
@@ -409,12 +409,12 @@ public class ApexTeamAutoModeLeftNear extends LinearOpMode {
         }
         feederEnablerServo.setPosition(FEEDER_SERVO_POS_120_DEG);
 
-        sleep(620); // adjust as needed for speed
+        sleep(500); // adjust as needed for speed
         specStopperServo.setDirection(Servo.Direction.REVERSE);
         specStopperServo.setPosition(STOPPER_SERVO_POS_OPEN_GATE);
         feederEnablerServo.setPosition(FEEDER_SERVO_POS_0_DEG);
 
-        sleep(620); // adjust as needed for speed
+        sleep(500); // adjust as needed for speed
     }
 
     private void stopAllDCMotors() {

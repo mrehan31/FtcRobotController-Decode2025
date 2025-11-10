@@ -27,7 +27,7 @@ public class ApexTeamAutoModeLeftFar extends LinearOpMode {
     private static final double intakeDCMotorPowerScale = 0.9;
 
     // Servo positions (0.0 to 1.0) Rotator Assembly
-    private static final double SHOOTER_ROTATOR_SERVO_START_POS = 0.35;  //0.37 to 0.43 starting position
+    private static final double SHOOTER_ROTATOR_SERVO_START_POS = 0.36;  //0.37 to 0.43 starting position
 
     private static final double SHOOTER_ROTATOR_SERVO_END_POS = 0.43;  // 150° away from start
 
@@ -58,7 +58,7 @@ public class ApexTeamAutoModeLeftFar extends LinearOpMode {
 
     PIDController xPID = new PIDController(0.01, 0.01, 0.0);
     PIDController yPID = new PIDController(0.01, 0.01, 0.0);
-    PIDController thetaPID = new PIDController(0.01, 0.01, 0.0);
+    PIDController thetaPID = new PIDController(0.015, 0.01, 0.0);
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -140,7 +140,7 @@ public class ApexTeamAutoModeLeftFar extends LinearOpMode {
                     y_in_botAxis, heading_deg);
             telemetry.addData("Position", data);
             Pose2d target;
-            target = new Pose2d(-220.0, -45.0, 20.0);
+            target = new Pose2d(-215.0, -45.0, 24.0);
 
             long curTime = System.currentTimeMillis();
             if (curTime - time_phase2 > 8000 ) {
@@ -151,7 +151,7 @@ public class ApexTeamAutoModeLeftFar extends LinearOpMode {
                 target = new Pose2d(-640.0, -1000, -90.0);
             }
             if (curTime - time_phase2 > 14000 ) {
-                target = new Pose2d(-220.0, -45.0, 20.0);
+                target = new Pose2d(-215.0, -45.0, 24.0);
             }
             if (curTime - time_phase2 > 21000 ) {
                 target = new Pose2d(-1250.0, -100.0, -90.0);
@@ -160,7 +160,7 @@ public class ApexTeamAutoModeLeftFar extends LinearOpMode {
                 target = new Pose2d(-1250.0, -1000.0, -90.0);
             }
             if (curTime - time_phase2 > 28000 ) {
-                target = new Pose2d(-320.0, -145.0, 20.0);
+                target = new Pose2d(-320.0, -145.0, 24.0);
             }
 
             long currentTime = System.currentTimeMillis();
@@ -178,20 +178,20 @@ public class ApexTeamAutoModeLeftFar extends LinearOpMode {
             double vy = yPID.update(errorY, dt);
             double omega = thetaPID.update(errorTheta, dt);
 
-            if(vx > 0.2)
-                vx = 0.2;
-            if(vx < -0.2)
-                vx = -0.2;
+            if(vx > 0.22)
+                vx = 0.22;
+            if(vx < -0.22)
+                vx = -0.22;
 
-            if(vy > 0.2)
-                vy = 0.2;
-            if(vy < -0.2)
-                vy = -0.2;
+            if(vy > 0.22)
+                vy = 0.22;
+            if(vy < -0.22)
+                vy = -0.22;
 
-            if(omega > 0.2)
-                omega = 0.2;
-            if(omega < -0.2)
-                omega = -0.2;
+            if(omega > 0.22)
+                omega = 0.22;
+            if(omega < -0.22)
+                omega = -0.22;
 
             data = String.format(Locale.US, "{Vx: %.3f, Vy: %.3f, Heading Cmd: %.3f}", vx,
                     vy, omega);
