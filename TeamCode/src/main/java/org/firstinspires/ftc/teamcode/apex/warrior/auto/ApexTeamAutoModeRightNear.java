@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -21,7 +22,7 @@ import java.util.Locale;
 public class ApexTeamAutoModeRightNear extends LinearOpMode {
     GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
     RobotHardwareConfigurator myRobotHW = new RobotHardwareConfigurator();
-    private static final double shooterDCMotorPowerScaleFactor = 0.395;
+    private static double shooterDCMotorPowerScaleFactor = 0.395;
     private static final double transferDCMotorPowerScale = 0.75;
     private static final double intakeDCMotorPowerScale = 0.9;
 
@@ -70,17 +71,25 @@ public class ApexTeamAutoModeRightNear extends LinearOpMode {
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
         odo.resetPosAndIMU();
 
-        telemetry.addData("Status", "HW Configuration Mapping Initialized");
+//        telemetry.addData("Status", "HW Configuration Mapping Initialized");
+//        telemetry.update();
+//
+//        telemetry.addData("Status", "HW Configuration Initialized");
+//        telemetry.update();
+//
+//        telemetry.addData("Status", "Actuators Initialized");
+//        telemetry.update();
+//
+//        telemetry.addData(">", "Robot Ready.  Press Play.");
+//        telemetry.update();
+        double battaryVoltage = getBatteryVoltage();
+
+        telemetry.addData("Battery Voltage", "%.2f volts", battaryVoltage);
+//        telemetry.update();
+        shooterDCMotorPowerScaleFactor = calculateShooterFactor(battaryVoltage);
+        telemetry.addData("Shooting factor", "%.2f volts", shooterDCMotorPowerScaleFactor);
         telemetry.update();
 
-        telemetry.addData("Status", "HW Configuration Initialized");
-        telemetry.update();
-
-        telemetry.addData("Status", "Actuators Initialized");
-        telemetry.update();
-
-        telemetry.addData(">", "Robot Ready.  Press Play.");
-        telemetry.update();
         waitForStart();
         telemetry.log().clear();
 
@@ -236,6 +245,25 @@ public class ApexTeamAutoModeRightNear extends LinearOpMode {
                 sleep(200);
             }
         }
+    }
+    private double getBatteryVoltage() {
+        double result = Double.POSITIVE_INFINITY;
+        for (VoltageSensor sensor : hardwareMap.voltageSensor) {
+            double voltage = sensor.getVoltage();
+            if (voltage > 0 && voltage < result) {
+                result = voltage;
+            }
+        }
+        return result;
+    }
+    private double calculateShooterFactor(double batteryVoltage) {
+        double slope = -0.042857142857;     // derived from calibration
+        double intercept = 0.96;  // derived from calibration
+
+        double factor = slope * batteryVoltage + intercept;
+
+        // Optional: clamp to safe range
+        return Math.max(0.0, Math.min(1.0, factor));
     }
     private void initMotorAndServo() {
         initiateChassisDCMotors();

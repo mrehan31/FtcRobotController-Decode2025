@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
+
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -22,7 +24,7 @@ public class ApexTeamAutoModeLeftFar extends LinearOpMode {
     GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
     /* Declare OpMode members */
     RobotHardwareConfigurator myRobotHW = new RobotHardwareConfigurator();
-    private static final double shooterDCMotorPowerScaleFactor = 0.45;
+    private static double shooterDCMotorPowerScaleFactor = 0.45;
     private static final double transferDCMotorPowerScale = 0.75;
     private static final double intakeDCMotorPowerScale = 0.9;
 
@@ -32,7 +34,7 @@ public class ApexTeamAutoModeLeftFar extends LinearOpMode {
     private static final double SHOOTER_ROTATOR_SERVO_END_POS = 0.43;  // 150° away from start
 
     private static final double STEP = 0.01;  // // Step rate controls how fast the servo moves (smaller = slower)
-    private final double FEEDER_SERVO_POS_0_DEG = 0.0;   // represents 0 degrees
+    private final double FEEDER_SERVO_POS_0_DEG = -0.06;   // represents 0 degrees
     private final double FEEDER_SERVO_POS_120_DEG = 0.07; // approx 120 degrees on a 5-turn servo
     private final double STOPPER_SERVO_POS_INITIAL_GATE = 0.55;
     private final double STOPPER_SERVO_POS_OPEN_GATE = 0.70;
@@ -71,17 +73,25 @@ public class ApexTeamAutoModeLeftFar extends LinearOpMode {
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
         odo.resetPosAndIMU();
 
-        telemetry.addData("Status", "HW Configuration Mapping Initialized");
+//        telemetry.addData("Status", "HW Configuration Mapping Initialized");
+//        telemetry.update();
+//
+//        telemetry.addData("Status", "HW Configuration Initialized");
+//        telemetry.update();
+//
+//        telemetry.addData("Status", "Actuators Initialized");
+//        telemetry.update();
+//
+//        telemetry.addData(">", "Robot Ready.  Press Play.");
+//        telemetry.update();
+        double battaryVoltage = getBatteryVoltage();
+
+        telemetry.addData("Battery Voltage", "%.2f volts", battaryVoltage);
+//        telemetry.update();
+        shooterDCMotorPowerScaleFactor = calculateShooterFactor(battaryVoltage);
+        telemetry.addData("Shooting factor", "%.2f volts", shooterDCMotorPowerScaleFactor);
         telemetry.update();
 
-        telemetry.addData("Status", "HW Configuration Initialized");
-        telemetry.update();
-
-        telemetry.addData("Status", "Actuators Initialized");
-        telemetry.update();
-
-        telemetry.addData(">", "Robot Ready.  Press Play.");
-        telemetry.update();
         waitForStart();
         telemetry.log().clear();
 
@@ -243,6 +253,25 @@ public class ApexTeamAutoModeLeftFar extends LinearOpMode {
                 sleep(200);
             }
         }
+    }
+    private double getBatteryVoltage() {
+        double result = Double.POSITIVE_INFINITY;
+        for (VoltageSensor sensor : hardwareMap.voltageSensor) {
+            double voltage = sensor.getVoltage();
+            if (voltage > 0 && voltage < result) {
+                result = voltage;
+            }
+        }
+        return result;
+    }
+    private double calculateShooterFactor(double batteryVoltage) {
+        double slope = -0.0307692307;      // derived from calibration points
+        double intercept = 0.8615384607;   // derived from calibration points
+
+        double factor = slope * batteryVoltage + intercept;
+
+        // Optional: clamp to safe range
+        return Math.max(0.0, Math.min(1.0, factor));
     }
     private void initMotorAndServo() {
         initiateChassisDCMotors();

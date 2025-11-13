@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -21,7 +22,7 @@ import java.util.Locale;
 public class ApexTeamAutoModeLeftNear extends LinearOpMode {
     GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
     RobotHardwareConfigurator myRobotHW = new RobotHardwareConfigurator();
-    private static final double shooterDCMotorPowerScaleFactor = 0.40;
+    private static double shooterDCMotorPowerScaleFactor = 0.40;
     private static final double transferDCMotorPowerScale = 0.65;
     private static final double intakeDCMotorPowerScale = 0.9;
 
@@ -70,17 +71,25 @@ public class ApexTeamAutoModeLeftNear extends LinearOpMode {
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
         odo.resetPosAndIMU();
 
-        telemetry.addData("Status", "HW Configuration Mapping Initialized");
+//        telemetry.addData("Status", "HW Configuration Mapping Initialized");
+//        telemetry.update();
+//
+//        telemetry.addData("Status", "HW Configuration Initialized");
+//        telemetry.update();
+//
+//        telemetry.addData("Status", "Actuators Initialized");
+//        telemetry.update();
+//
+//        telemetry.addData(">", "Robot Ready.  Press Play.");
+//        telemetry.update();
+        double battaryVoltage = getBatteryVoltage();
+
+        telemetry.addData("Battery Voltage", "%.2f volts", battaryVoltage);
+//        telemetry.update();
+        shooterDCMotorPowerScaleFactor = calculateShooterFactor(battaryVoltage);
+        telemetry.addData("Shooting factor", "%.2f volts", shooterDCMotorPowerScaleFactor);
         telemetry.update();
 
-        telemetry.addData("Status", "HW Configuration Initialized");
-        telemetry.update();
-
-        telemetry.addData("Status", "Actuators Initialized");
-        telemetry.update();
-
-        telemetry.addData(">", "Robot Ready.  Press Play.");
-        telemetry.update();
         waitForStart();
         telemetry.log().clear();
 
@@ -139,23 +148,23 @@ public class ApexTeamAutoModeLeftNear extends LinearOpMode {
                     y_in_botAxis, heading_deg);
             telemetry.addData("Position", data);
             Pose2d target;
-            target = new Pose2d(1350, 0.0, -2.0);
+            target = new Pose2d(1280, 750, 45);
 
             long curTime = System.currentTimeMillis();
             if (curTime - time_phase2 > 9000 ) {
-                target = new Pose2d(1350, 0.0, -132);
+                target = new Pose2d(1280, 750, -90);
             }
-            if (curTime - time_phase2 > 12000 ) {
-                target = new Pose2d(710, -900, -132);
+            if (curTime - time_phase2 > 11000 ) {
+                target = new Pose2d(1280, -310.0, -90);
             }
-            if (curTime - time_phase2 > 16000 ) {
-                target = new Pose2d(1350, 0.0, -2.0);
+            if (curTime - time_phase2 > 15000 ) {
+                target = new Pose2d(1280, 750, 45);
             }
             if (curTime - time_phase2 > 22000 ) {
-                target = new Pose2d(1400, 0.0, -100);
+                target = new Pose2d(1900, 200, -90);
             }
             if (curTime - time_phase2 > 25000 ) {
-                target = new Pose2d(1350, -1000, -135);
+                target = new Pose2d(1900, -360, -90);
             }
             long currentTime = System.currentTimeMillis();
             double dt = (currentTime - lastTime) / 1e3;
@@ -224,7 +233,7 @@ public class ApexTeamAutoModeLeftNear extends LinearOpMode {
             long curTime = System.currentTimeMillis();
 
             if ((curTime - start_time > 5000 && curTime - start_time < 9000) ||
-                    (curTime - start_time > 19000 && curTime - start_time < 22000)) {
+                    (curTime - start_time > 19000 && curTime - start_time < 23000)) {
                 startShooterDCMotors();
                 runIntakeMechDCMotor();
                 runTransferMechDCMotor();
@@ -236,6 +245,25 @@ public class ApexTeamAutoModeLeftNear extends LinearOpMode {
                 sleep(200);
             }
         }
+    }
+    private double getBatteryVoltage() {
+        double result = Double.POSITIVE_INFINITY;
+        for (VoltageSensor sensor : hardwareMap.voltageSensor) {
+            double voltage = sensor.getVoltage();
+            if (voltage > 0 && voltage < result) {
+                result = voltage;
+            }
+        }
+        return result;
+    }
+    private double calculateShooterFactor(double batteryVoltage) {
+        double slope = -0.042857142857;     // derived from calibration
+        double intercept = 0.96;  // derived from calibration
+
+        double factor = slope * batteryVoltage + intercept;
+
+        // Optional: clamp to safe range
+        return Math.max(0.0, Math.min(1.0, factor));
     }
     private void initMotorAndServo() {
         initiateChassisDCMotors();
