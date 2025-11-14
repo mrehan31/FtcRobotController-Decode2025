@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.apex.warrior.auto.GoBildaPinpointDriver;
 
 // Apex Team main TeleOp Mode
-@TeleOp(name = "Robot Manual Drive-blue_alliance", group = "Linear Opmode")
+//@TeleOp(name = "Robot Manual Drive-blue_alliance", group = "Linear Opmode")
 public class ApexTeamTeleOpMode_headingCompensated_blue_alliance extends LinearOpMode {
     GoBildaPinpointDriver odo;
     /* Declare OpMode members */
