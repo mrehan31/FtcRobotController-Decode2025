@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.apex.warrior;
 
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 
+import static org.firstinspires.ftc.teamcode.apex.warrior.DcMotorConstant.chassisDCMotorPowerScale;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -27,8 +29,10 @@ public class ApexTeamTeleOpMode extends LinearOpMode {
     private Servo shooterMechRotatorServo;
     private Servo feederEnablerServo;
     private Servo specStopperServo;
-    private boolean lastLeftTriggerState = false;
-    private boolean lastRightTriggerState = false;
+    private boolean lastLeftTriggerStateOnGamepad1 = false;
+    private boolean lastRightTriggerStateOnGamepad1 = false;
+    private boolean lastLeftTriggerStateOnGamepad2 = false;
+    private boolean lastRightTriggerStateOnGamepad2 = false;
     private double rotorServoCurrentPosition;
 
     @Override
@@ -51,120 +55,206 @@ public class ApexTeamTeleOpMode extends LinearOpMode {
         waitForStart();
         telemetry.log().clear();
 
-        // Variable to track button press state for feeder stopper Servo
-        boolean lastButtonState = false;
-
         while (opModeIsActive()) {
+            setChassisDCMotorsDirection();
+            // variable used for all chassis DC Motors, used only in case of DPAD controlled operations
+            double frontLeftChassisPow, frontRightChassisPow, backLeftChassisPow, backRightChassisPow;
 
             specStopperServo.setPosition(ServoMotorConstant.STOPPER_SERVO_POS_INITIAL_GATE);
-            // Current trigger states (threshold of 0.5)
-            boolean leftTriggerPressed  = gamepad2.left_trigger  > 0.5;
-            boolean rightTriggerPressed = gamepad2.right_trigger > 0.5;
 
-            // ---------- Left Trigger Edge Detect ----------
-            if (leftTriggerPressed && !lastLeftTriggerState) {
-                onLeftTriggerPressed();
+            // Current trigger states of GamePad 2 (threshold of 0.5)
+            boolean leftTriggerPressedOnGamepad1  = gamepad1.left_trigger  > 0.5;
+            boolean rightTriggerPressedOnGamepad1 = gamepad1.right_trigger > 0.5;
+
+            // Current trigger states of GamePad 2 (threshold of 0.5)
+            boolean leftTriggerPressedOnGamepad2  = gamepad2.left_trigger  > 0.5;
+            boolean rightTriggerPressedOnGamepad2 = gamepad2.right_trigger > 0.5;
+
+            // ---------- Left Trigger Edge Detect On Gamepad1 ----------
+            if (leftTriggerPressedOnGamepad1 && !lastLeftTriggerStateOnGamepad1) {
+                onLeftTriggerPressedOnGamepad1();
             }
 
-            // ---------- Right Trigger Edge Detect ----------
-            if (rightTriggerPressed && !lastRightTriggerState) {
-                onRightTriggerPressed();
+            // ---------- Right Trigger Edge Detect On Gamepad1 ----------
+            if (rightTriggerPressedOnGamepad1 && !lastRightTriggerStateOnGamepad1) {
+                onRightTriggerPressedOnGamepad1();
+            }
+
+            // ---------- Left Trigger Edge Detect On Gamepad2 ----------
+            if (leftTriggerPressedOnGamepad2 && !lastLeftTriggerStateOnGamepad2) {
+                onLeftTriggerPressedOnGamepad2();
+            }
+
+            // ---------- Right Trigger Edge Detect On Gamepad2 ----------
+            if (rightTriggerPressedOnGamepad2 && !lastRightTriggerStateOnGamepad2) {
+                onRightTriggerPressedOnGamepad2();
             }
 
             // Update previous states
-            lastLeftTriggerState = leftTriggerPressed;
-            lastRightTriggerState = rightTriggerPressed;
+            lastLeftTriggerStateOnGamepad1 = leftTriggerPressedOnGamepad1;
+            lastRightTriggerStateOnGamepad1 = rightTriggerPressedOnGamepad1;
+
+            lastLeftTriggerStateOnGamepad2 = leftTriggerPressedOnGamepad2;
+            lastRightTriggerStateOnGamepad2 = rightTriggerPressedOnGamepad2;
 
             mecanumDriveGamepadOneJoyStickControlled();
 
-            if (gamepad1.dpad_left) {
-                //Todo();
-            }
-            if (gamepad1.dpad_right) {
-                //Todo();
-            }
-            // D-Pad Up → Move to end (150°)
+            /* GamePade 1 -> Joystick Controls Starts */
             if (gamepad1.dpad_up) {
-                rotorServoCurrentPosition = ServoMotorConstant.SHOOTER_ROTATOR_SERVO_END_POS;
-                telemetry.addData("D-Pad Up clicked!", rotorServoCurrentPosition);
-                telemetry.update();
-                shooterMechRotatorServo.setPosition(rotorServoCurrentPosition);
+                // Forward motion [scaled power, slow movement]
+                frontLeftChassisPow = chassisDCMotorPowerScale; frontRightChassisPow = chassisDCMotorPowerScale;
+                backLeftChassisPow = chassisDCMotorPowerScale; backRightChassisPow = chassisDCMotorPowerScale;
+                // Apply powers
+                frontLeftChassisDC.setPower(frontLeftChassisPow);
+                frontRightChassisDC.setPower(frontRightChassisPow);
+                backLeftChassisDC.setPower(backLeftChassisPow);
+                backRightChassisDC.setPower(backRightChassisPow);
+            } else if (gamepad1.dpad_down) {
+                // Backward motion [scaled power, slow movement]
+                frontLeftChassisPow = -chassisDCMotorPowerScale; frontRightChassisPow = -chassisDCMotorPowerScale;
+                backLeftChassisPow = -chassisDCMotorPowerScale; backRightChassisPow = -chassisDCMotorPowerScale;
+                // Apply powers
+                frontLeftChassisDC.setPower(frontLeftChassisPow);
+                frontRightChassisDC.setPower(frontRightChassisPow);
+                backLeftChassisDC.setPower(backLeftChassisPow);
+                backRightChassisDC.setPower(backRightChassisPow);
+            } else if (gamepad1.dpad_left) {
+                // Strafe Left (mecanum) [scaled power, slow movement]
+                frontLeftChassisPow = -chassisDCMotorPowerScale; frontRightChassisPow = chassisDCMotorPowerScale;
+                backLeftChassisPow = chassisDCMotorPowerScale; backRightChassisPow = -chassisDCMotorPowerScale;
+                // Apply powers
+                frontLeftChassisDC.setPower(frontLeftChassisPow);
+                frontRightChassisDC.setPower(frontRightChassisPow);
+                backLeftChassisDC.setPower(backLeftChassisPow);
+                backRightChassisDC.setPower(backRightChassisPow);
+            } else if (gamepad1.dpad_right) {
+                // Strafe Right (mecanum) [scaled power, slow movement]
+                frontLeftChassisPow = chassisDCMotorPowerScale; frontRightChassisPow = -chassisDCMotorPowerScale;
+                backLeftChassisPow = -chassisDCMotorPowerScale; backRightChassisPow = chassisDCMotorPowerScale;
+                // Apply powers
+                frontLeftChassisDC.setPower(frontLeftChassisPow);
+                frontRightChassisDC.setPower(frontRightChassisPow);
+                backLeftChassisDC.setPower(backLeftChassisPow);
+                backRightChassisDC.setPower(backRightChassisPow);
+            } else if (gamepad1.left_bumper) {
+                //This function is used for validation of range only. Not to be used in actual operation.
+                //moveRotatorAssemblyToSuppliedPosition(ServoMotorConstant.SHOOTER_ROTATOR_SERVO_END_POS_FAR, "GamePad 1 Left Bumper clicked!");
+            } else if (gamepad1.right_bumper) {
+                //This function is used for validation of range only. Not to be used in actual operation.
+                //moveRotatorAssemblyToSuppliedPosition(ServoMotorConstant.SHOOTER_ROTATOR_SERVO_START_POS_NEAR, "GamePad 1 Right Bumper clicked!");
+            } else if (gamepad1.x) {
+                moveRotatorAssemblyToSuppliedPosition(ServoMotorConstant.SHOOTER_ROTATOR_SERVO_DEFAULT_POS_NEAR, "GamePad 1 function x clicked!");
             }
-            // D-Pad Down → Move back to start
-            if (gamepad1.dpad_down) {
-                rotorServoCurrentPosition = ServoMotorConstant.SHOOTER_ROTATOR_SERVO_START_POS;
-                telemetry.addData("D-Pad Down clicked!", rotorServoCurrentPosition);
-                telemetry.update();
-                shooterMechRotatorServo.setPosition(rotorServoCurrentPosition);
+            else if (gamepad1.b) {
+                moveRotatorAssemblyToSuppliedPosition(ServoMotorConstant.SHOOTER_ROTATOR_SERVO_DEFAULT_POS_FAR, "GamePad 1 function b clicked!");
             }
-            if (gamepad1.left_bumper) {
-                //Todo();
-            }
-            if (gamepad1.right_bumper) {
-                //Todo();
-            }
+            /* GamePade 1 -> Joystick Controls ends */
 
-
+            /* GamePade 2 -> Joystick Controls Starts */
             /* GamePade 2 -> Intake DC Motor movement - START */
             if (gamepad2.x) {
                 runIntakeMechDCMotor();
             }
             /* GamePade 2 -> Intake DC Motor movement - STOP */
-            if (gamepad2.b) {
+            else if (gamepad2.b) {
                 stopIntakeMechDCMotor();
             }
             /* GamePade 2 -> Transfer DC Motor movement - START */
-            if (gamepad2.y) {
+            else if (gamepad2.y) {
                 runTransferMechDCMotor();
             }
             /* GamePade 2 -> Transfer DC Motor movement - STOP */
-            if (gamepad2.a) {
-                stopTransferMechDCMotor();
+            else if (gamepad2.a) {
+                runTransferMechDCMotorInReverse();
             }
-            /* GamePade 2 -> Shooter DC Motor movement - START */
-            if (gamepad2.dpad_up) {
-                runShooterDCMotors();
+            /* GamePade 2 -> Shooter DC Motor movement - For Near Region START */
+            else if (gamepad2.dpad_up) {
+                stopShooterDCMotors();
+                sleep(10);
+                runShooterDCMotors(DcMotorConstant.shooterDCMotorPowerScaleFactorNearRegion);
             }
             /* GamePade 2 -> Shooter DC Motor movement - STOP */
-            if (gamepad2.dpad_down) {
+            else if (gamepad2.dpad_down) {
                 stopShooterDCMotors();
-                //transferMechDC.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             }
-            if (gamepad2.left_bumper) {
-                //TODO
+            /* GamePade 2 -> Shooter DC Motor movement - For Far Region START */
+            else if (gamepad2.left_bumper) {
+                stopShooterDCMotors();
+                sleep(10);
+                runShooterDCMotors(DcMotorConstant.shooterDCMotorPowerScaleFactorFarRegion);
             }
-            if (gamepad2.right_bumper) {
+            /* GamePade 2 -> feeder Servo Motor movement - Release the artifact */
+            else if (gamepad2.right_bumper) {
                 operateFeederServo();
             }
-            /* GamePade 2 -> operator Rotator Servo movement based on Gamepad2 both triggers LT and RT */
-            //operateRotatorServo();
             telemetry.update();
             idle();
         }
     }
 
-    // 🔵 Called once when LEFT TRIGGER is pressed
-    private void onLeftTriggerPressed() {
-        telemetry.addLine("LEFT trigger clicked!");
+    /**
+     * Set chassis DC Motor directions
+     * Default direction is FORWARD
+     */
+    private void setChassisDCMotorsDirection() {
+        frontRightChassisDC.setDirection(REVERSE);
+        backRightChassisDC.setDirection(REVERSE);
+    }
+
+    private void moveRotatorAssemblyToSuppliedPosition(double shooterRotatorServoPosition, String eventSource) {
+        rotorServoCurrentPosition = shooterRotatorServoPosition;
+        telemetry.addData(eventSource, rotorServoCurrentPosition);
+        telemetry.update();
+        shooterMechRotatorServo.setPosition(rotorServoCurrentPosition);
+    }
+
+    // 🔴 Called once when LEFT TRIGGER is pressed on Gamepad 1
+    private void onLeftTriggerPressedOnGamepad1() {
+        telemetry.addLine("LEFT trigger clicked! - Gamepad 1");
         telemetry.update();
         rotorServoCurrentPosition = rotorServoCurrentPosition - STEP;
         // Limit within defined range
-        rotorServoCurrentPosition = Math.max(ServoMotorConstant.SHOOTER_ROTATOR_SERVO_START_POS, rotorServoCurrentPosition);// Set new position
+        rotorServoCurrentPosition = Math.max(ServoMotorConstant.SHOOTER_ROTATOR_SERVO_START_POS_FAR, rotorServoCurrentPosition);// Set new position
         // Set new position
         shooterMechRotatorServo.setPosition(rotorServoCurrentPosition);
-        telemetry.addData("LEFT trigger clicked: rotorServoCurrentPosition", rotorServoCurrentPosition);
+        telemetry.addData("LEFT trigger clicked - Gamepad 1: rotorServoCurrentPosition", rotorServoCurrentPosition);
         telemetry.update();
     }
 
-    // 🔴 Called once when RIGHT TRIGGER is pressed
-    private void onRightTriggerPressed() {
-        telemetry.addLine("RIGHT trigger clicked!");
+    // 🔴 Called once when RIGHT TRIGGER is pressed on Gamepad 1
+    private void onRightTriggerPressedOnGamepad1() {
+        telemetry.addLine("RIGHT trigger clicked! - Gamepad 1");
         telemetry.update();
         rotorServoCurrentPosition = rotorServoCurrentPosition + STEP;
         // Limit within defined range
-        rotorServoCurrentPosition = Math.min(ServoMotorConstant.SHOOTER_ROTATOR_SERVO_END_POS, rotorServoCurrentPosition);// Set new position
+        rotorServoCurrentPosition = Math.min(ServoMotorConstant.SHOOTER_ROTATOR_SERVO_END_POS_FAR, rotorServoCurrentPosition);// Set new position
         shooterMechRotatorServo.setPosition(rotorServoCurrentPosition);
-        telemetry.addData("RIGHT trigger clicked: rotorServoCurrentPosition", rotorServoCurrentPosition);
+        telemetry.addData("RIGHT trigger clicked - Gamepad 1: rotorServoCurrentPosition", rotorServoCurrentPosition);
+        telemetry.update();
+    }
+
+    // 🔵 Called once when LEFT TRIGGER is pressed on Gamepad 2
+    private void onLeftTriggerPressedOnGamepad2() {
+        telemetry.addLine("LEFT trigger clicked! - Gamepad 2");
+        telemetry.update();
+        rotorServoCurrentPosition = rotorServoCurrentPosition - STEP;
+        // Limit within defined range
+        rotorServoCurrentPosition = Math.max(ServoMotorConstant.SHOOTER_ROTATOR_SERVO_START_POS_NEAR, rotorServoCurrentPosition);// Set new position
+        // Set new position
+        shooterMechRotatorServo.setPosition(rotorServoCurrentPosition);
+        telemetry.addData("LEFT trigger clicked - Gamepad 2: rotorServoCurrentPosition", rotorServoCurrentPosition);
+        telemetry.update();
+    }
+
+    // 🔴 Called once when RIGHT TRIGGER is pressed on Gamepad 2
+    private void onRightTriggerPressedOnGamepad2() {
+        telemetry.addLine("RIGHT trigger clicked! - Gamepad 2");
+        telemetry.update();
+        rotorServoCurrentPosition = rotorServoCurrentPosition + STEP;
+        // Limit within defined range
+        rotorServoCurrentPosition = Math.min(ServoMotorConstant.SHOOTER_ROTATOR_SERVO_END_POS_NEAR, rotorServoCurrentPosition);// Set new position
+        shooterMechRotatorServo.setPosition(rotorServoCurrentPosition);
+        telemetry.addData("RIGHT trigger clicked - Gamepad 2: rotorServoCurrentPosition", rotorServoCurrentPosition);
         telemetry.update();
     }
 
@@ -275,7 +365,7 @@ public class ApexTeamTeleOpMode extends LinearOpMode {
         specStopperServo = myRobotHW.getSpecStopperServo();
         // Initialize shooterMechRotatorServo & feederEnablerServo to the starting position
         specStopperServo.setDirection(Servo.Direction.FORWARD);
-        shooterMechRotatorServo.setPosition(ServoMotorConstant.SHOOTER_ROTATOR_SERVO_START_POS);
+        shooterMechRotatorServo.setPosition(ServoMotorConstant.SHOOTER_ROTATOR_SERVO_DEFAULT_POS_NEAR);
         feederEnablerServo.setPosition(ServoMotorConstant.FEEDER_SERVO_POS_0_DEG);
         specStopperServo.setPosition(ServoMotorConstant.STOPPER_SERVO_POS_INITIAL_GATE);
         telemetry.addData("Servo initiateServoMotors:", "Configuration Completed");
@@ -289,8 +379,7 @@ public class ApexTeamTeleOpMode extends LinearOpMode {
 
     private void mecanumDriveGamepadOneJoyStickControlled() {
 
-        frontRightChassisDC.setDirection(REVERSE);
-        backRightChassisDC.setDirection(REVERSE);
+        setChassisDCMotorsDirection();
         double h = Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y);
         double robotAngle = Math.atan2(gamepad1.right_stick_y, gamepad1.right_stick_x) - Math.PI / 4;
         double rightX = gamepad1.left_stick_x;
@@ -306,22 +395,22 @@ public class ApexTeamTeleOpMode extends LinearOpMode {
     }
 
     // Function to run Shooter DC Motors at scaled power
-    private void runShooterDCMotors() {
-        // Reverse one motor so they spin opposite directions
+    private void runShooterDCMotors(double shooterDCMotorPowerScaleFactor) {
         leftShooterDC.setDirection(DcMotor.Direction.FORWARD);
         rightShooterDC.setDirection(DcMotor.Direction.FORWARD);
         telemetry.addData("DcMotor DirectionLeftShooter", leftShooterDC.getDirection());
         telemetry.addData("DcMotor DirectionRightShooter", rightShooterDC.getDirection());
         telemetry.update();
-        startShooterDCMotors();
+        startShooterDCMotors(shooterDCMotorPowerScaleFactor);
     }
 
     // Function to give scaled power to both shooter DC motors(opposite rotation)
-    private void startShooterDCMotors() {
+    private void startShooterDCMotors(double shooterDCMotorPowerScaleFactor) {
         // Ensure shooterDCPowerScale stays between 0 and 1
-        leftShooterDC.setPower(DcMotorConstant.shooterDCMotorPowerScaleFactor);
-        rightShooterDC.setPower(DcMotorConstant.shooterDCMotorPowerScaleFactor);
-        telemetry.addData("DcMotor shooterDCPowerScale", DcMotorConstant.shooterDCMotorPowerScaleFactor);
+        shooterDCMotorPowerScaleFactor = Math.max(0, Math.min(shooterDCMotorPowerScaleFactor, 1));
+        leftShooterDC.setPower(shooterDCMotorPowerScaleFactor);
+        rightShooterDC.setPower(shooterDCMotorPowerScaleFactor);
+        telemetry.addData("DcMotor shooterDCPowerScale", shooterDCMotorPowerScaleFactor);
         telemetry.addData("DcMotor LeftShooter Power", leftShooterDC.getPower());
         telemetry.addData("DcMotor RightShooter Power", rightShooterDC.getPower());
         telemetry.update();
@@ -336,7 +425,6 @@ public class ApexTeamTeleOpMode extends LinearOpMode {
     }
 
     // Function to give scaled power to Transfer DC Motor
-
     private void startTransferMechDCMotor(double transferDCPowerScale) {
         // Ensure transferDCPowerScale stays between 0 and 1
         transferDCPowerScale = Math.max(0, Math.min(transferDCPowerScale, 1));
@@ -379,6 +467,15 @@ public class ApexTeamTeleOpMode extends LinearOpMode {
         stopIntakeMechDCMotor();
         telemetry.addData("stopAllDCMotors:  ", "ended");
     }
+
+    private void stopChassisDCMotors() {
+        // Optional but recommended
+        frontLeftChassisDC.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRightChassisDC.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeftChassisDC.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRightChassisDC.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+
 
     // Function to stop both shooter DC motors (idle)
     private void stopShooterDCMotors() {

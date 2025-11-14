@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.apex.warrior.RobotHardwareConfigurator;
 import java.util.Locale;
 
 // Apex Team main Autonomous Mode
-@Autonomous(name = "Auto Drive - Blue Team - Far from goal", group = "Auto Opmode")
+@Autonomous(name = "Rehan Auto Drive - Blue Team - Far from goal", group = "Auto Opmode")
 public class ApexTeamAutoModeLeftFar extends LinearOpMode {
     GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
     /* Declare OpMode members */
