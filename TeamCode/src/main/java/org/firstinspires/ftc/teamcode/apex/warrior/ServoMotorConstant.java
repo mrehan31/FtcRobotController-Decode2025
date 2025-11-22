@@ -6,8 +6,6 @@ package org.firstinspires.ftc.teamcode.apex.warrior;
 public class ServoMotorConstant {
 
     // Servo positions (0.0 to 1.0) Rotator Assembly
-
-
     public static final double SHOOTER_ROTATOR_SERVO_DEFAULT_POS_FAR = 0.36;  // Default position FAR from goal
     public static final double SHOOTER_ROTATOR_SERVO_DEFAULT_POS_NEAR = 0.42; // Default position NEAR to goal
     public static final double SHOOTER_ROTATOR_SERVO_START_POS_NEAR = 0.40;  // Starting position NEAR to goal
