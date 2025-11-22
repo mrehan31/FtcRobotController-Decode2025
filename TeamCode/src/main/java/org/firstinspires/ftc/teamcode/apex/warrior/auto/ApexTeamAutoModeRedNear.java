@@ -13,8 +13,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.apex.warrior.RobotHardwareConfigurator;
-import org.firstinspires.ftc.teamcode.apex.warrior.auto.config.RedNearDcMotorConstant;
-import org.firstinspires.ftc.teamcode.apex.warrior.auto.config.RedNearServoMotorConstant;
+import org.firstinspires.ftc.teamcode.apex.warrior.auto.config.BlueNearDcMotorConstant;
+import org.firstinspires.ftc.teamcode.apex.warrior.auto.config.BlueNearServoMotorConstant;
 
 import java.util.Locale;
 
@@ -23,7 +23,7 @@ import java.util.Locale;
 public class ApexTeamAutoModeRedNear extends LinearOpMode {
     GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
     RobotHardwareConfigurator myRobotHW = new RobotHardwareConfigurator();
-    private double shooterDCMotorPowerScaleFactor = 0.395;
+    private double shooterDCMotorPowerScaleFactor = 0.40;
     private boolean stopperButtonStateForFirstTime = false;
     private DcMotor frontLeftChassisDC;
     private DcMotor frontRightChassisDC;
@@ -38,7 +38,6 @@ public class ApexTeamAutoModeRedNear extends LinearOpMode {
     private Servo specStopperServo;
 
     private double rotorServoCurrentPosition;
-
     PIDController xPID = new PIDController(0.01, 0.01, 0.0);
     PIDController yPID = new PIDController(0.01, 0.01, 0.0);
     PIDController thetaPID = new PIDController(0.015, 0.01, 0.0);
@@ -59,6 +58,7 @@ public class ApexTeamAutoModeRedNear extends LinearOpMode {
         telemetry.addData("Shooting factor", "%.2f volts", shooterDCMotorPowerScaleFactor);
         telemetry.addData(">", "Robot Ready.  Press Play.");
         telemetry.update();
+
         waitForStart();
         telemetry.log().clear();
 
@@ -101,7 +101,7 @@ public class ApexTeamAutoModeRedNear extends LinearOpMode {
         long time_phase2 = System.currentTimeMillis();
 
         while (opModeIsActive()) {
-            specStopperServo.setPosition(RedNearServoMotorConstant.STOPPER_SERVO_POS_INITIAL_GATE);
+            specStopperServo.setPosition(BlueNearServoMotorConstant.STOPPER_SERVO_POS_INITIAL_GATE);
             odo.update();
             Pose2D curPos = odo.getPosition();
 
@@ -115,23 +115,26 @@ public class ApexTeamAutoModeRedNear extends LinearOpMode {
                     y_in_botAxis, heading_deg);
             telemetry.addData("Position", data);
             Pose2d target;
-            target = new Pose2d(1320, 0.0, 2.0);
+            target = new Pose2d(1280, -750, -44);
 
             long curTime = System.currentTimeMillis();
             if (curTime - time_phase2 > 9000 ) {
-                target = new Pose2d(1350, 0.0, 132);
+                target = new Pose2d(1280, -750, 90);
             }
-            if (curTime - time_phase2 > 12000 ) {
-                target = new Pose2d(710, 850, 132);
+            if (curTime - time_phase2 > 11000 ) {
+                target = new Pose2d(1280, 320.0, 90);
             }
-            if (curTime - time_phase2 > 16000 ) {
-                target = new Pose2d(1350, 0.0, 2.0);
+            if (curTime - time_phase2 > 15000 ) {
+                target = new Pose2d(1280, -750, -44);
             }
-            if (curTime - time_phase2 > 22000 ) {
-                target = new Pose2d(1320, 0.0, 80);
+            if (curTime - time_phase2 > 22500 ) {
+                target = new Pose2d(1900, -200, 90);
             }
             if (curTime - time_phase2 > 25000 ) {
-                target = new Pose2d(1350, 1000, 135);
+                target = new Pose2d(1900, 450, 90);
+            }
+            if (curTime - time_phase2 > 28000 ) {
+                target = new Pose2d(1900, 0, 0);
             }
             long currentTime = System.currentTimeMillis();
             double dt = (currentTime - lastTime) / 1e3;
@@ -148,20 +151,20 @@ public class ApexTeamAutoModeRedNear extends LinearOpMode {
             double vy = yPID.update(errorY, dt);
             double omega = thetaPID.update(errorTheta, dt);
 
-            if(vx > 0.2)
-                vx = 0.2;
-            if(vx < -0.2)
-                vx = -0.2;
+            if(vx > 0.22)
+                vx = 0.22;
+            if(vx < -0.22)
+                vx = -0.22;
 
-            if(vy > 0.2)
-                vy = 0.2;
-            if(vy < -0.2)
-                vy = -0.2;
+            if(vy > 0.22)
+                vy = 0.22;
+            if(vy < -0.22)
+                vy = -0.22;
 
-            if(omega > 0.2)
-                omega = 0.2;
-            if(omega < -0.2)
-                omega = -0.2;
+            if(omega > 0.22)
+                omega = 0.22;
+            if(omega < -0.22)
+                omega = -0.22;
 
             data = String.format(Locale.US, "{Vx: %.3f, Vy: %.3f, Heading Cmd: %.3f}", vx,
                     vy, omega);
@@ -200,15 +203,15 @@ public class ApexTeamAutoModeRedNear extends LinearOpMode {
             long curTime = System.currentTimeMillis();
 
             if ((curTime - start_time > 5000 && curTime - start_time < 9000) ||
-                    (curTime - start_time > 19000 && curTime - start_time < 22000)) {
+                    (curTime - start_time > 19000 && curTime - start_time < 23000)) {
                 startShooterDCMotors();
                 runIntakeMechDCMotor();
                 runTransferMechDCMotor();
                 operateFeederServo();
             }
             else {
-                specStopperServo.setPosition(RedNearServoMotorConstant.STOPPER_SERVO_POS_OPEN_GATE);
-                feederEnablerServo.setPosition(RedNearServoMotorConstant.FEEDER_SERVO_POS_0_DEG);
+                specStopperServo.setPosition(BlueNearServoMotorConstant.STOPPER_SERVO_POS_OPEN_GATE);
+                feederEnablerServo.setPosition(BlueNearServoMotorConstant.FEEDER_SERVO_POS_0_DEG);
                 sleep(200);
             }
         }
@@ -227,7 +230,7 @@ public class ApexTeamAutoModeRedNear extends LinearOpMode {
 
     private double calculateShooterFactor(double batteryVoltage) {
         double slope = -0.042857142857;     // derived from calibration
-        double intercept = 0.96;  // derived from calibration
+        double intercept = 0.94;  // derived from calibration
 
         double factor = slope * batteryVoltage + intercept;
 
@@ -317,9 +320,9 @@ public class ApexTeamAutoModeRedNear extends LinearOpMode {
         specStopperServo = myRobotHW.getSpecStopperServo();
         // Initialize shooterMechRotatorServo & feederEnablerServo to the starting position
         specStopperServo.setDirection(Servo.Direction.FORWARD);
-        shooterMechRotatorServo.setPosition(RedNearServoMotorConstant.SHOOTER_ROTATOR_SERVO_START_POS);
-        feederEnablerServo.setPosition(RedNearServoMotorConstant.FEEDER_SERVO_POS_0_DEG);
-        specStopperServo.setPosition(RedNearServoMotorConstant.STOPPER_SERVO_POS_INITIAL_GATE);
+        shooterMechRotatorServo.setPosition(BlueNearServoMotorConstant.SHOOTER_ROTATOR_SERVO_START_POS);
+        feederEnablerServo.setPosition(BlueNearServoMotorConstant.FEEDER_SERVO_POS_0_DEG);
+        specStopperServo.setPosition(BlueNearServoMotorConstant.STOPPER_SERVO_POS_INITIAL_GATE);
         telemetry.addData("Servo initiateServoMotors:", "Configuration Completed");
         telemetry.addLine("Use triggers to move shooterMechRotatorServo");
         telemetry.addLine("Right Trigger → upward movement");
@@ -354,7 +357,7 @@ public class ApexTeamAutoModeRedNear extends LinearOpMode {
         transferMechDC.setDirection(DcMotor.Direction.FORWARD);
         telemetry.addData("DcMotor DirectionTransfer", transferMechDC.getDirection());
         telemetry.update();
-        startTransferMechDCMotor(RedNearDcMotorConstant.transferDCMotorPowerScale);
+        startTransferMechDCMotor(BlueNearDcMotorConstant.transferDCMotorPowerScale);
     }
 
     // Function to give scaled power to Transfer DC Motor
@@ -372,7 +375,7 @@ public class ApexTeamAutoModeRedNear extends LinearOpMode {
         intakeMechDC.setDirection(DcMotor.Direction.FORWARD);
         telemetry.addData("DcMotor DirectionIntake", intakeMechDC.getDirection());
         telemetry.update();
-        startIntakeMechDCMotor(RedNearDcMotorConstant.intakeDCMotorPowerScale);
+        startIntakeMechDCMotor(BlueNearDcMotorConstant.intakeDCMotorPowerScale);
     }
 
     // Function to give scaled power to Intake DC Motor
@@ -389,7 +392,7 @@ public class ApexTeamAutoModeRedNear extends LinearOpMode {
         telemetry.addLine("shootingAnglePositioner");
         telemetry.update();
         // Limit within defined range
-        rotorServoCurrentPosition = Math.max(RedNearServoMotorConstant.SHOOTER_ROTATOR_SERVO_START_POS, rotorServoCurrentPosition);// Set new position
+        rotorServoCurrentPosition = Math.max(BlueNearServoMotorConstant.SHOOTER_ROTATOR_SERVO_START_POS, rotorServoCurrentPosition);// Set new position
         // Set new position
         shooterMechRotatorServo.setPosition(rotorServoCurrentPosition);
         telemetry.addData("shootingAnglePositioner: rotorServoCurrentPosition", rotorServoCurrentPosition);
@@ -402,16 +405,16 @@ public class ApexTeamAutoModeRedNear extends LinearOpMode {
         if(!stopperButtonStateForFirstTime) {
             stopperButtonStateForFirstTime = true;
         } else{
-            specStopperServo.setPosition(RedNearServoMotorConstant.STOPPER_SERVO_POS_OPEN_GATE);
+            specStopperServo.setPosition(BlueNearServoMotorConstant.STOPPER_SERVO_POS_OPEN_GATE);
         }
-        feederEnablerServo.setPosition(RedNearServoMotorConstant.FEEDER_SERVO_POS_120_DEG);
+        feederEnablerServo.setPosition(BlueNearServoMotorConstant.FEEDER_SERVO_POS_120_DEG);
 
-        sleep(620); // adjust as needed for speed
+        sleep(500); // adjust as needed for speed
         specStopperServo.setDirection(Servo.Direction.REVERSE);
-        specStopperServo.setPosition(RedNearServoMotorConstant.STOPPER_SERVO_POS_OPEN_GATE);
-        feederEnablerServo.setPosition(RedNearServoMotorConstant.FEEDER_SERVO_POS_0_DEG);
+        specStopperServo.setPosition(BlueNearServoMotorConstant.STOPPER_SERVO_POS_OPEN_GATE);
+        feederEnablerServo.setPosition(BlueNearServoMotorConstant.FEEDER_SERVO_POS_0_DEG);
 
-        sleep(620); // adjust as needed for speed
+        sleep(500); // adjust as needed for speed
     }
 
     private void stopAllDCMotors() {
@@ -435,4 +438,5 @@ public class ApexTeamAutoModeRedNear extends LinearOpMode {
     private void stopIntakeMechDCMotor() {
         intakeMechDC.setPower(0);
     }
+
 }

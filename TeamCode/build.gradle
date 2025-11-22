@@ -27,4 +27,5 @@ dependencies {
     implementation project(':FtcRobotController')
     implementation 'org.openftc:easyopencv:1.7.3'
     implementation 'org.openftc:apriltag:2.1.0'
+    implementation 'org.openftc:easyopencv:1.6.2'
 }

@@ -115,24 +115,28 @@ public class ApexTeamAutoModeBlueNear extends LinearOpMode {
                     y_in_botAxis, heading_deg);
             telemetry.addData("Position", data);
             Pose2d target;
-            target = new Pose2d(1280, 750, 45);
+            target = new Pose2d(1280, 750, 46);
 
             long curTime = System.currentTimeMillis();
             if (curTime - time_phase2 > 9000 ) {
                 target = new Pose2d(1280, 750, -90);
             }
             if (curTime - time_phase2 > 11000 ) {
-                target = new Pose2d(1280, -310.0, -90);
+                target = new Pose2d(1280, -320.0, -90);
             }
             if (curTime - time_phase2 > 15000 ) {
-                target = new Pose2d(1280, 750, 45);
+                target = new Pose2d(1280, 750, 46);
             }
-            if (curTime - time_phase2 > 22000 ) {
+            if (curTime - time_phase2 > 22500 ) {
                 target = new Pose2d(1900, 200, -90);
             }
             if (curTime - time_phase2 > 25000 ) {
-                target = new Pose2d(1900, -360, -90);
+                target = new Pose2d(1900, -450, -90);
             }
+            if (curTime - time_phase2 > 28000 ) {
+                target = new Pose2d(1900, 0, 0);
+            }
+
             long currentTime = System.currentTimeMillis();
             double dt = (currentTime - lastTime) / 1e3;
             lastTime = currentTime;
@@ -227,7 +231,7 @@ public class ApexTeamAutoModeBlueNear extends LinearOpMode {
 
     private double calculateShooterFactor(double batteryVoltage) {
         double slope = -0.042857142857;     // derived from calibration
-        double intercept = 0.96;  // derived from calibration
+        double intercept = 0.94;  // derived from calibration
 
         double factor = slope * batteryVoltage + intercept;
 
