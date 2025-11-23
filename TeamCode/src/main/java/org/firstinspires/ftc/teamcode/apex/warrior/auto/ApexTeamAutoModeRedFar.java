@@ -119,11 +119,11 @@ public class ApexTeamAutoModeRedFar extends LinearOpMode {
             target = new Pose2d(-215.0, 45.0, -21.2);
 
             long curTime = System.currentTimeMillis();
-            if (curTime - time_phase2 > 8000 ) {
+            if (curTime - time_phase2 > 9000 ) {
                 target = new Pose2d(-640.0, 100.0, 90.0);
             }
 
-            if (curTime - time_phase2 > 10000 ) {
+            if (curTime - time_phase2 > 11000 ) {
                 target = new Pose2d(-640.0, 1050, 90.0);
             }
             if (curTime - time_phase2 > 14000 ) {
@@ -206,7 +206,7 @@ public class ApexTeamAutoModeRedFar extends LinearOpMode {
 
             long curTime = System.currentTimeMillis();
 
-            if ((curTime - start_time > 3000 && curTime - start_time < 8000) ||
+            if ((curTime - start_time > 3000 && curTime - start_time < 9000) ||
                     (curTime - start_time > 18000 && curTime - start_time < 22000)) {
                 startShooterDCMotors();
                 runIntakeMechDCMotor();

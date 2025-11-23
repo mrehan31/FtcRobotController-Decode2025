@@ -118,19 +118,19 @@ public class ApexTeamAutoModeBlueNear extends LinearOpMode {
             target = new Pose2d(1280, 750, 46);
 
             long curTime = System.currentTimeMillis();
-            if (curTime - time_phase2 > 9000 ) {
+            if (curTime - time_phase2 > 10000 ) {
                 target = new Pose2d(1280, 750, -90);
             }
-            if (curTime - time_phase2 > 11000 ) {
+            if (curTime - time_phase2 > 12000 ) {
                 target = new Pose2d(1280, -320.0, -90);
             }
             if (curTime - time_phase2 > 15000 ) {
                 target = new Pose2d(1280, 750, 46);
             }
-            if (curTime - time_phase2 > 22500 ) {
-                target = new Pose2d(1900, 200, -90);
+            if (curTime - time_phase2 > 24000 ) {
+                target = new Pose2d(1900, 150, -90);
             }
-            if (curTime - time_phase2 > 25000 ) {
+            if (curTime - time_phase2 > 26000 ) {
                 target = new Pose2d(1900, -450, -90);
             }
             if (curTime - time_phase2 > 28000 ) {
@@ -203,8 +203,8 @@ public class ApexTeamAutoModeBlueNear extends LinearOpMode {
 
             long curTime = System.currentTimeMillis();
 
-            if ((curTime - start_time > 5000 && curTime - start_time < 9000) ||
-                    (curTime - start_time > 19000 && curTime - start_time < 23000)) {
+            if ((curTime - start_time > 5000 && curTime - start_time < 10000) ||
+                    (curTime - start_time > 19000 && curTime - start_time < 24000)) {
                 startShooterDCMotors();
                 runIntakeMechDCMotor();
                 runTransferMechDCMotor();
