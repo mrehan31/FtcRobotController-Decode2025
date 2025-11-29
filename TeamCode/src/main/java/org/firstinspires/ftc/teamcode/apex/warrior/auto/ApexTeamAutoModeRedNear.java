@@ -115,23 +115,23 @@ public class ApexTeamAutoModeRedNear extends LinearOpMode {
                     y_in_botAxis, heading_deg);
             telemetry.addData("Position", data);
             Pose2d target;
-            target = new Pose2d(1280, -750, -44);
+            target = new Pose2d(1280, -650, -44);
 
             long curTime = System.currentTimeMillis();
             if (curTime - time_phase2 > 10000 ) {
-                target = new Pose2d(1280, -750, 90);
+                target = new Pose2d(1280, -650, 90);
             }
             if (curTime - time_phase2 > 12000 ) {
                 target = new Pose2d(1280, 320.0, 90);
             }
             if (curTime - time_phase2 > 15000 ) {
-                target = new Pose2d(1280, -750, -44);
+                target = new Pose2d(1280, -650, -44);
             }
             if (curTime - time_phase2 > 24000 ) {
-                target = new Pose2d(1900, -150, 90);
+                target = new Pose2d(1900, -200, 90);
             }
             if (curTime - time_phase2 > 26000 ) {
-                target = new Pose2d(1900, 450, 90);
+                target = new Pose2d(1900, 480, 90);
             }
             if (curTime - time_phase2 > 28000 ) {
                 target = new Pose2d(1900, 0, 0);
@@ -230,7 +230,7 @@ public class ApexTeamAutoModeRedNear extends LinearOpMode {
 
     private double calculateShooterFactor(double batteryVoltage) {
         double slope = -0.042857142857;     // derived from calibration
-        double intercept = 0.94;  // derived from calibration
+        double intercept = 0.93;  // derived from calibration
 
         double factor = slope * batteryVoltage + intercept;
 
@@ -409,12 +409,12 @@ public class ApexTeamAutoModeRedNear extends LinearOpMode {
         }
         feederEnablerServo.setPosition(BlueNearServoMotorConstant.FEEDER_SERVO_POS_120_DEG);
 
-        sleep(500); // adjust as needed for speed
+        sleep(650); // adjust as needed for speed
         specStopperServo.setDirection(Servo.Direction.REVERSE);
         specStopperServo.setPosition(BlueNearServoMotorConstant.STOPPER_SERVO_POS_OPEN_GATE);
         feederEnablerServo.setPosition(BlueNearServoMotorConstant.FEEDER_SERVO_POS_0_DEG);
 
-        sleep(500); // adjust as needed for speed
+        sleep(650); // adjust as needed for speed
     }
 
     private void stopAllDCMotors() {
