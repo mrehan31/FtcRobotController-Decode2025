@@ -128,7 +128,7 @@ public class ApexTeamAutoModeBlueNear extends LinearOpMode {
                 target = new Pose2d(1280, 650, 46);
             }
             if (curTime - time_phase2 > 24000 ) {
-                target = new Pose2d(1900, 200, -90);
+                target = new Pose2d(1900, 300, -90);
             }
             if (curTime - time_phase2 > 26000 ) {
                 target = new Pose2d(1900, -480, -90);
