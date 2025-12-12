@@ -13,14 +13,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.apex.warrior.RobotHardwareConfigurator;
-import org.firstinspires.ftc.teamcode.apex.warrior.auto.config.RedNearDcMotorConstant;
-import org.firstinspires.ftc.teamcode.apex.warrior.auto.config.RedNearServoMotorConstant;
+import org.firstinspires.ftc.teamcode.apex.warrior.auto.config.BlueNearDcMotorConstant;
+import org.firstinspires.ftc.teamcode.apex.warrior.auto.config.BlueNearServoMotorConstant;
 
 import java.util.Locale;
 
 // Apex Team main Autonomous Mode
-@Autonomous(name = "Auto Drive - Red Team - Near to goal- Faster", group = "Auto Opmode")
-public class ApexTeamAutoModeRedNearFaster extends LinearOpMode {
+@Autonomous(name = "Auto Drive - Blue Team - Near to goal - Faster", group = "Auto Opmode")
+public class ApexTeamAutoModeBlueNearFaster extends LinearOpMode {
     GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
     RobotHardwareConfigurator myRobotHW = new RobotHardwareConfigurator();
     private double shooterDCMotorPowerScaleFactor = 0.40;
@@ -101,7 +101,7 @@ public class ApexTeamAutoModeRedNearFaster extends LinearOpMode {
         long time_phase2 = System.currentTimeMillis();
 
         while (opModeIsActive()) {
-            specStopperServo.setPosition(RedNearServoMotorConstant.STOPPER_SERVO_POS_INITIAL_GATE);
+            specStopperServo.setPosition(BlueNearServoMotorConstant.STOPPER_SERVO_POS_INITIAL_GATE);
             odo.update();
             Pose2D curPos = odo.getPosition();
 
@@ -115,28 +115,49 @@ public class ApexTeamAutoModeRedNearFaster extends LinearOpMode {
                     y_in_botAxis, heading_deg);
             telemetry.addData("Position", data);
             Pose2d target;
-            target = new Pose2d(1280, -650, -44);
+//            target = new Pose2d(1280, 650, 46);
+//
+//            long curTime = System.currentTimeMillis();
+//            if (curTime - time_phase2 > 10000 ) {
+//                target = new Pose2d(1280, 650, -90);
+//            }
+//            if (curTime - time_phase2 > 12000 ) {
+//                target = new Pose2d(1300, -340.0, -90);
+//            }
+//            if (curTime - time_phase2 > 15000 ) {
+//                target = new Pose2d(1280, 650, 46);
+//            }
+//            if (curTime - time_phase2 > 24000 ) {
+//                target = new Pose2d(1900, 300, -90);
+//            }
+//            if (curTime - time_phase2 > 26000 ) {
+//                target = new Pose2d(1900, -480, -90);
+//            }
+//            if (curTime - time_phase2 > 28000 ) {
+//                target = new Pose2d(1900, 0, 0);
+//            }
+            target = new Pose2d(1280, 650, 47);
 
             long curTime = System.currentTimeMillis();
             if (curTime - time_phase2 > 7000 ) {
-                target = new Pose2d(1280, -650, 90);
+                target = new Pose2d(1280, 650, -90);
             }
             if (curTime - time_phase2 > 8500 ) {
-                target = new Pose2d(1280, 320.0, 90);
+                target = new Pose2d(1300, -340.0, -90); // first pick
             }
             if (curTime - time_phase2 > 11000 ) {
-                target = new Pose2d(1280, -650, -44);
+                target = new Pose2d(1280, 650, 47); // shooting pos
             }
             if (curTime - time_phase2 > 18000 ) {
-                target = new Pose2d(1900, -300, 90);
+                target = new Pose2d(1900, 300, -90); // second pick
             }
             if (curTime - time_phase2 > 20500 ) {
-                target = new Pose2d(1900, 490, 90);
+                target = new Pose2d(1900, -500, -90);
             }
             if (curTime - time_phase2 > 22000 ) {
-                target = new Pose2d(1280, -680, -44);
+                target = new Pose2d(1280, 650, 47);
             }
-            if (curTime - time_phase2 > 29500 ) {
+            if (curTime - time_phase2 > 29300 ) {
                 target = new Pose2d(1900, 0, 0);
             }
             long currentTime = System.currentTimeMillis();
@@ -207,15 +228,15 @@ public class ApexTeamAutoModeRedNearFaster extends LinearOpMode {
 
             if ((curTime - start_time > 3000 && curTime - start_time < 7000) ||
                     (curTime - start_time > 14000 && curTime - start_time < 18000)||
-                    (curTime - start_time > 25000 && curTime - start_time < 29500)) {
+                    (curTime - start_time > 25000 && curTime - start_time < 29300)) {
                 startShooterDCMotors();
                 runIntakeMechDCMotor();
                 runTransferMechDCMotor();
                 operateFeederServo();
             }
             else {
-                specStopperServo.setPosition(RedNearServoMotorConstant.STOPPER_SERVO_POS_OPEN_GATE);
-                feederEnablerServo.setPosition(RedNearServoMotorConstant.FEEDER_SERVO_POS_0_DEG);
+                specStopperServo.setPosition(BlueNearServoMotorConstant.STOPPER_SERVO_POS_OPEN_GATE);
+                feederEnablerServo.setPosition(BlueNearServoMotorConstant.FEEDER_SERVO_POS_0_DEG);
                 sleep(200);
             }
         }
@@ -324,9 +345,9 @@ public class ApexTeamAutoModeRedNearFaster extends LinearOpMode {
         specStopperServo = myRobotHW.getSpecStopperServo();
         // Initialize shooterMechRotatorServo & feederEnablerServo to the starting position
         specStopperServo.setDirection(Servo.Direction.FORWARD);
-        shooterMechRotatorServo.setPosition(RedNearServoMotorConstant.SHOOTER_ROTATOR_SERVO_START_POS);
-        feederEnablerServo.setPosition(RedNearServoMotorConstant.FEEDER_SERVO_POS_0_DEG);
-        specStopperServo.setPosition(RedNearServoMotorConstant.STOPPER_SERVO_POS_INITIAL_GATE);
+        shooterMechRotatorServo.setPosition(BlueNearServoMotorConstant.SHOOTER_ROTATOR_SERVO_START_POS);
+        feederEnablerServo.setPosition(BlueNearServoMotorConstant.FEEDER_SERVO_POS_0_DEG);
+        specStopperServo.setPosition(BlueNearServoMotorConstant.STOPPER_SERVO_POS_INITIAL_GATE);
         telemetry.addData("Servo initiateServoMotors:", "Configuration Completed");
         telemetry.addLine("Use triggers to move shooterMechRotatorServo");
         telemetry.addLine("Right Trigger → upward movement");
@@ -361,7 +382,7 @@ public class ApexTeamAutoModeRedNearFaster extends LinearOpMode {
         transferMechDC.setDirection(DcMotor.Direction.FORWARD);
         telemetry.addData("DcMotor DirectionTransfer", transferMechDC.getDirection());
         telemetry.update();
-        startTransferMechDCMotor(RedNearDcMotorConstant.transferDCMotorPowerScale);
+        startTransferMechDCMotor(BlueNearDcMotorConstant.transferDCMotorPowerScale);
     }
 
     // Function to give scaled power to Transfer DC Motor
@@ -379,7 +400,7 @@ public class ApexTeamAutoModeRedNearFaster extends LinearOpMode {
         intakeMechDC.setDirection(DcMotor.Direction.FORWARD);
         telemetry.addData("DcMotor DirectionIntake", intakeMechDC.getDirection());
         telemetry.update();
-        startIntakeMechDCMotor(RedNearDcMotorConstant.intakeDCMotorPowerScale);
+        startIntakeMechDCMotor(BlueNearDcMotorConstant.intakeDCMotorPowerScale);
     }
 
     // Function to give scaled power to Intake DC Motor
@@ -396,7 +417,7 @@ public class ApexTeamAutoModeRedNearFaster extends LinearOpMode {
         telemetry.addLine("shootingAnglePositioner");
         telemetry.update();
         // Limit within defined range
-        rotorServoCurrentPosition = Math.max(RedNearServoMotorConstant.SHOOTER_ROTATOR_SERVO_START_POS, rotorServoCurrentPosition);// Set new position
+        rotorServoCurrentPosition = Math.max(BlueNearServoMotorConstant.SHOOTER_ROTATOR_SERVO_START_POS, rotorServoCurrentPosition);// Set new position
         // Set new position
         shooterMechRotatorServo.setPosition(rotorServoCurrentPosition);
         telemetry.addData("shootingAnglePositioner: rotorServoCurrentPosition", rotorServoCurrentPosition);
@@ -409,14 +430,14 @@ public class ApexTeamAutoModeRedNearFaster extends LinearOpMode {
         if(!stopperButtonStateForFirstTime) {
             stopperButtonStateForFirstTime = true;
         } else{
-            specStopperServo.setPosition(RedNearServoMotorConstant.STOPPER_SERVO_POS_OPEN_GATE);
+            specStopperServo.setPosition(BlueNearServoMotorConstant.STOPPER_SERVO_POS_OPEN_GATE);
         }
-        feederEnablerServo.setPosition(RedNearServoMotorConstant.FEEDER_SERVO_POS_120_DEG);
+        feederEnablerServo.setPosition(BlueNearServoMotorConstant.FEEDER_SERVO_POS_120_DEG);
 
         sleep(600); // adjust as needed for speed
         specStopperServo.setDirection(Servo.Direction.REVERSE);
-        specStopperServo.setPosition(RedNearServoMotorConstant.STOPPER_SERVO_POS_OPEN_GATE);
-        feederEnablerServo.setPosition(RedNearServoMotorConstant.FEEDER_SERVO_POS_0_DEG);
+        specStopperServo.setPosition(BlueNearServoMotorConstant.STOPPER_SERVO_POS_OPEN_GATE);
+        feederEnablerServo.setPosition(BlueNearServoMotorConstant.FEEDER_SERVO_POS_0_DEG);
 
         sleep(600); // adjust as needed for speed
     }
