@@ -230,7 +230,7 @@ public class ApexTeamAutoModeRedNear extends LinearOpMode {
 
     private double calculateShooterFactor(double batteryVoltage) {
         double slope = -0.042857142857;     // derived from calibration
-        double intercept = 0.93;  // derived from calibration
+        double intercept = 0.94;  // derived from calibration
 
         double factor = slope * batteryVoltage + intercept;
 
@@ -409,12 +409,12 @@ public class ApexTeamAutoModeRedNear extends LinearOpMode {
         }
         feederEnablerServo.setPosition(BlueNearServoMotorConstant.FEEDER_SERVO_POS_120_DEG);
 
-        sleep(650); // adjust as needed for speed
+        sleep(600); // adjust as needed for speed
         specStopperServo.setDirection(Servo.Direction.REVERSE);
         specStopperServo.setPosition(BlueNearServoMotorConstant.STOPPER_SERVO_POS_OPEN_GATE);
         feederEnablerServo.setPosition(BlueNearServoMotorConstant.FEEDER_SERVO_POS_0_DEG);
 
-        sleep(650); // adjust as needed for speed
+        sleep(600); // adjust as needed for speed
     }
 
     private void stopAllDCMotors() {

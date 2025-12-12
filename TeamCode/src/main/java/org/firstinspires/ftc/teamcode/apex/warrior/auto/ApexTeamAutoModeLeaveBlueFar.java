@@ -120,33 +120,31 @@ public class ApexTeamAutoModeLeaveBlueFar extends LinearOpMode {
 
             long curTime = System.currentTimeMillis();
             if (curTime - time_phase2 > 9000 ) {
-                target = new Pose2d(-640.0, -100.0, -90.0);
+                target = new Pose2d(-215.0, -45.0, -60.0);
             }
 
-            if (curTime - time_phase2 > 11000 ) {
-                target = new Pose2d(-700, 200, -90.0);
+            if (curTime - time_phase2 > 12000 ) {
+                target = new Pose2d(-160, -1100.0, -60.0);
             }
 
-//            long curTime = System.currentTimeMillis();
-//            if (curTime - time_phase2 > 9000 ) {
-//                target = new Pose2d(-640.0, -100.0, -90.0);
-//            }
-//
-//            if (curTime - time_phase2 > 11000 ) {
-//                target = new Pose2d(-640.0, -1000, -90.0);
-//            }
-//            if (curTime - time_phase2 > 14000 ) {
-//                target = new Pose2d(-215.0, -45.0, 24.0);
-//            }
-//            if (curTime - time_phase2 > 22000 ) {
-//                target = new Pose2d(-1250.0, -100.0, -90.0);
-//            }
-//            if (curTime - time_phase2 > 25000 ) {
-//                target = new Pose2d(-1250.0, -1000.0, -90.0);
-//            }
-//            if (curTime - time_phase2 > 28000 ) {
-//                target = new Pose2d(-320.0, -145.0, 24.0);
-//            }
+            if (curTime - time_phase2 > 14000 ) {
+                target = new Pose2d(-150.0, -1100, -40);
+            }
+
+            if (curTime - time_phase2 > 16000 ) {
+                target = new Pose2d(-120.0, -1100, -30);
+            }
+
+            if (curTime - time_phase2 > 18000 ) {
+                target = new Pose2d(-50.0, -1100, -10);
+            }
+
+            if (curTime - time_phase2 > 18500 ) {
+                target = new Pose2d(-215.0, -45.0, 24.0);
+            }
+            if (curTime - time_phase2 > 28000 ) {
+                target = new Pose2d(-100, -550, 0.0);
+            }
 
             long currentTime = System.currentTimeMillis();
             double dt = (currentTime - lastTime) / 1e3;
@@ -215,8 +213,8 @@ public class ApexTeamAutoModeLeaveBlueFar extends LinearOpMode {
 
             long curTime = System.currentTimeMillis();
 
-            if ((curTime - start_time > 3000 && curTime - start_time < 9000)){// ||
-//                    (curTime - start_time > 18000 && curTime - start_time < 22000)) {
+            if ((curTime - start_time > 3000 && curTime - start_time < 9000)||
+                    (curTime - start_time > 24500 && curTime - start_time < 28000)) {
                 startShooterDCMotors();
                 runIntakeMechDCMotor();
                 runTransferMechDCMotor();
