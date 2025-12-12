@@ -13,17 +13,17 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.apex.warrior.RobotHardwareConfigurator;
-import org.firstinspires.ftc.teamcode.apex.warrior.auto.config.BlueFarDcMotorConstant;
-import org.firstinspires.ftc.teamcode.apex.warrior.auto.config.BlueFarServoMotorConstant;
+import org.firstinspires.ftc.teamcode.apex.warrior.auto.config.RedFarDcMotorConstant;
+import org.firstinspires.ftc.teamcode.apex.warrior.auto.config.RedFarServoMotorConstant;
 
 import java.util.Locale;
 
 // Apex Team main Autonomous Mode
-@Autonomous(name = "Auto Drive - Leave Blue - Far from goal - Faster", group = "Auto Opmode")
-public class ApexTeamAutoModeLeaveBlueFarFaster extends LinearOpMode {
+@Autonomous(name = "Auto Drive - Red Team - Far from goal - Faster", group = "Auto Opmode")
+public class ApexTeamAutoModeRedFarFaster extends LinearOpMode {
     GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
     RobotHardwareConfigurator myRobotHW = new RobotHardwareConfigurator();
-    private double shooterDCMotorPowerScaleFactor = 0.45;
+    private double shooterDCMotorPowerScaleFactor = 0.445;
     private boolean stopperButtonStateForFirstTime = false;
     private DcMotor frontLeftChassisDC;
     private DcMotor frontRightChassisDC;
@@ -41,7 +41,7 @@ public class ApexTeamAutoModeLeaveBlueFarFaster extends LinearOpMode {
 
     PIDController xPID = new PIDController(0.01, 0.01, 0.0);
     PIDController yPID = new PIDController(0.01, 0.01, 0.0);
-    PIDController thetaPID = new PIDController(0.015, 0.01, 0.0);
+    PIDController thetaPID = new PIDController(0.02, 0.01, 0.0);
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -102,7 +102,7 @@ public class ApexTeamAutoModeLeaveBlueFarFaster extends LinearOpMode {
         long time_phase2 = System.currentTimeMillis();
 
         while (opModeIsActive()) {
-            specStopperServo.setPosition(BlueFarServoMotorConstant.STOPPER_SERVO_POS_INITIAL_GATE);
+            specStopperServo.setPosition(RedFarServoMotorConstant.STOPPER_SERVO_POS_INITIAL_GATE);
             odo.update();
             Pose2D curPos = odo.getPosition();
 
@@ -116,34 +116,51 @@ public class ApexTeamAutoModeLeaveBlueFarFaster extends LinearOpMode {
                     y_in_botAxis, heading_deg);
             telemetry.addData("Position", data);
             Pose2d target;
-            target = new Pose2d(-215.0, -45.0, 24.0);
+//            target = new Pose2d(-215.0, 45.0, -21.2);
+//
+//            long curTime = System.currentTimeMillis();
+//            if (curTime - time_phase2 > 9000 ) {
+//                target = new Pose2d(-640.0, 100.0, 90.0);
+//            }
+//
+//            if (curTime - time_phase2 > 11000 ) {
+//                target = new Pose2d(-640.0, 1050, 90.0);
+//            }
+//            if (curTime - time_phase2 > 14000 ) {
+//                target = new Pose2d(-215.0, 45.0, -21.2);
+//            }
+//            if (curTime - time_phase2 > 22000 ) {
+//                target = new Pose2d(-1250.0, 100.0, 90.0);
+//            }
+//            if (curTime - time_phase2 > 25000 ) {
+//                target = new Pose2d(-1250.0, 1000.0, 90.0);
+//            }
+//            if (curTime - time_phase2 > 28000 ) {
+//                target = new Pose2d(-320.0, 145.0, -20.0);
+//            }
+            target = new Pose2d(-215.0, 45.0, -21.2);
 
             long curTime = System.currentTimeMillis();
-            if (curTime - time_phase2 > 9000 ) {
-                target = new Pose2d(-215.0, -45.0, -60.0);
+            if (curTime - time_phase2 > 6000 ) { // first pick up
+                target = new Pose2d(-640.0, 100.0, 90.0);
             }
-
-            if (curTime - time_phase2 > 12000 ) {
-                target = new Pose2d(-160, -1100.0, -60.0);
+            if (curTime - time_phase2 > 8000) {
+                target = new Pose2d(-640.0, 1120, 90.0);
             }
-
-            if (curTime - time_phase2 > 14000 ) {
-                target = new Pose2d(-150.0, -1100, -40);
+            if (curTime - time_phase2 > 10000 ) {
+                target = new Pose2d(-215.0, 45.0, -21.2);
             }
-
-            if (curTime - time_phase2 > 16000 ) {
-                target = new Pose2d(-120.0, -1100, -30);
-            }
-
             if (curTime - time_phase2 > 18000 ) {
-                target = new Pose2d(-50.0, -1100, -10);
+                target = new Pose2d(-1250.0, 100.0, 90.0);
             }
-
-            if (curTime - time_phase2 > 18500 ) {
-                target = new Pose2d(-215.0, -45.0, 24.0);
+            if (curTime - time_phase2 > 20500 ) {
+                target = new Pose2d(-1250.0, 1120.0, 90.0);
             }
-            if (curTime - time_phase2 > 28000 ) {
-                target = new Pose2d(-100, -550, 0.0);
+            if (curTime - time_phase2 > 22500 ) {
+                target = new Pose2d(-215.0, 45.0, -21.2);
+            }
+            if (curTime - time_phase2 > 29000 ) {
+                target = new Pose2d(-600.0, 45.0, -24.0);
             }
 
             long currentTime = System.currentTimeMillis();
@@ -213,19 +230,26 @@ public class ApexTeamAutoModeLeaveBlueFarFaster extends LinearOpMode {
 
             long curTime = System.currentTimeMillis();
 
-            if ((curTime - start_time > 3000 && curTime - start_time < 9000)||
-                    (curTime - start_time > 24500 && curTime - start_time < 28000)) {
+            if ((curTime - start_time > 2000 && curTime - start_time < 6000) ||
+                    (curTime - start_time > 14000 && curTime - start_time < 18000)||
+                    (curTime - start_time > 25500 && curTime - start_time < 29500)) {
                 startShooterDCMotors();
                 runIntakeMechDCMotor();
                 runTransferMechDCMotor();
                 operateFeederServo();
             }
             else {
-                specStopperServo.setPosition(BlueFarServoMotorConstant.STOPPER_SERVO_POS_OPEN_GATE);
-                feederEnablerServo.setPosition(BlueFarServoMotorConstant.FEEDER_SERVO_POS_0_DEG);
+                specStopperServo.setPosition(RedFarServoMotorConstant.STOPPER_SERVO_POS_OPEN_GATE);
+                feederEnablerServo.setPosition(RedFarServoMotorConstant.FEEDER_SERVO_POS_0_DEG);
                 sleep(200);
             }
         }
+    }
+
+    private void initMotorAndServo() {
+        initiateChassisDCMotors();
+        initiateOtherDCMotors();
+        initiateServoMotors();
     }
 
     private double getBatteryVoltage() {
@@ -241,7 +265,7 @@ public class ApexTeamAutoModeLeaveBlueFarFaster extends LinearOpMode {
 
     private double calculateShooterFactor(double batteryVoltage) {
         double slope = -0.0307692307;      // derived from calibration points
-        //double intercept = 0.8615384607;   // derived from calibration points
+       //double intercept = 0.8615384607;   // derived from calibration points
         double intercept = 0.85;   // derived from calibration points
 
         double factor = slope * batteryVoltage + intercept;
@@ -249,13 +273,6 @@ public class ApexTeamAutoModeLeaveBlueFarFaster extends LinearOpMode {
         // Optional: clamp to safe range
         return Math.max(0.0, Math.min(1.0, factor));
     }
-
-    private void initMotorAndServo() {
-        initiateChassisDCMotors();
-        initiateOtherDCMotors();
-        initiateServoMotors();
-    }
-
     private void initiateChassisDCMotors() {
         telemetry.addData("DcMotor initiateChassisDCMotors:", "Configuration Started");
 
@@ -332,9 +349,9 @@ public class ApexTeamAutoModeLeaveBlueFarFaster extends LinearOpMode {
         specStopperServo = myRobotHW.getSpecStopperServo();
         // Initialize shooterMechRotatorServo & feederEnablerServo to the starting position
         specStopperServo.setDirection(Servo.Direction.FORWARD);
-        shooterMechRotatorServo.setPosition(BlueFarServoMotorConstant.SHOOTER_ROTATOR_SERVO_START_POS);
-        feederEnablerServo.setPosition(BlueFarServoMotorConstant.FEEDER_SERVO_POS_0_DEG);
-        specStopperServo.setPosition(BlueFarServoMotorConstant.STOPPER_SERVO_POS_INITIAL_GATE);
+        shooterMechRotatorServo.setPosition(RedFarServoMotorConstant.SHOOTER_ROTATOR_SERVO_START_POS);
+        feederEnablerServo.setPosition(RedFarServoMotorConstant.FEEDER_SERVO_POS_0_DEG);
+        specStopperServo.setPosition(RedFarServoMotorConstant.STOPPER_SERVO_POS_INITIAL_GATE);
         telemetry.addData("Servo initiateServoMotors:", "Configuration Completed");
         telemetry.addLine("Use triggers to move shooterMechRotatorServo");
         telemetry.addLine("Right Trigger → upward movement");
@@ -369,7 +386,7 @@ public class ApexTeamAutoModeLeaveBlueFarFaster extends LinearOpMode {
         transferMechDC.setDirection(DcMotor.Direction.FORWARD);
         telemetry.addData("DcMotor DirectionTransfer", transferMechDC.getDirection());
         telemetry.update();
-        startTransferMechDCMotor(BlueFarDcMotorConstant.transferDCMotorPowerScale);
+        startTransferMechDCMotor(RedFarDcMotorConstant.transferDCMotorPowerScale);
     }
 
     // Function to give scaled power to Transfer DC Motor
@@ -387,7 +404,7 @@ public class ApexTeamAutoModeLeaveBlueFarFaster extends LinearOpMode {
         intakeMechDC.setDirection(DcMotor.Direction.FORWARD);
         telemetry.addData("DcMotor DirectionIntake", intakeMechDC.getDirection());
         telemetry.update();
-        startIntakeMechDCMotor(BlueFarDcMotorConstant.intakeDCMotorPowerScale);
+        startIntakeMechDCMotor(RedFarDcMotorConstant.intakeDCMotorPowerScale);
     }
 
     // Function to give scaled power to Intake DC Motor
@@ -404,7 +421,7 @@ public class ApexTeamAutoModeLeaveBlueFarFaster extends LinearOpMode {
         telemetry.addLine("shootingAnglePositioner");
         telemetry.update();
         // Limit within defined range
-        rotorServoCurrentPosition = Math.max(BlueFarServoMotorConstant.SHOOTER_ROTATOR_SERVO_START_POS, rotorServoCurrentPosition);// Set new position
+        rotorServoCurrentPosition = Math.max(RedFarServoMotorConstant.SHOOTER_ROTATOR_SERVO_START_POS, rotorServoCurrentPosition);// Set new position
         // Set new position
         shooterMechRotatorServo.setPosition(rotorServoCurrentPosition);
         telemetry.addData("shootingAnglePositioner: rotorServoCurrentPosition", rotorServoCurrentPosition);
@@ -417,16 +434,16 @@ public class ApexTeamAutoModeLeaveBlueFarFaster extends LinearOpMode {
         if(!stopperButtonStateForFirstTime) {
             stopperButtonStateForFirstTime = true;
         } else{
-            specStopperServo.setPosition(BlueFarServoMotorConstant.STOPPER_SERVO_POS_OPEN_GATE);
+            specStopperServo.setPosition(RedFarServoMotorConstant.STOPPER_SERVO_POS_OPEN_GATE);
         }
-        feederEnablerServo.setPosition(BlueFarServoMotorConstant.FEEDER_SERVO_POS_120_DEG);
+        feederEnablerServo.setPosition(RedFarServoMotorConstant.FEEDER_SERVO_POS_120_DEG);
 
-        sleep(600); // adjust as needed for speed
+        sleep(650); // adjust as needed for speed
         specStopperServo.setDirection(Servo.Direction.REVERSE);
-        specStopperServo.setPosition(BlueFarServoMotorConstant.STOPPER_SERVO_POS_OPEN_GATE);
-        feederEnablerServo.setPosition(BlueFarServoMotorConstant.FEEDER_SERVO_POS_0_DEG);
+        specStopperServo.setPosition(RedFarServoMotorConstant.STOPPER_SERVO_POS_OPEN_GATE);
+        feederEnablerServo.setPosition(RedFarServoMotorConstant.FEEDER_SERVO_POS_0_DEG);
 
-        sleep(600); // adjust as needed for speed
+        sleep(650); // adjust as needed for speed
     }
 
     private void stopAllDCMotors() {
