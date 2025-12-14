@@ -115,7 +115,7 @@ public class ApexTeamAutoModeRedNearFaster extends LinearOpMode {
                     y_in_botAxis, heading_deg);
             telemetry.addData("Position", data);
             Pose2d target;
-            target = new Pose2d(1280, -650, -44);
+            target = new Pose2d(1280, -640, -42);
 
             long curTime = System.currentTimeMillis();
             if (curTime - time_phase2 > 7000 ) {
@@ -125,16 +125,16 @@ public class ApexTeamAutoModeRedNearFaster extends LinearOpMode {
                 target = new Pose2d(1280, 320.0, 90);
             }
             if (curTime - time_phase2 > 11000 ) {
-                target = new Pose2d(1280, -650, -44);
+                target = new Pose2d(1280, -640, -42);
             }
             if (curTime - time_phase2 > 18000 ) {
-                target = new Pose2d(1900, -300, 90);
+                target = new Pose2d(1900, -320, 90);
             }
             if (curTime - time_phase2 > 20500 ) {
                 target = new Pose2d(1900, 490, 90);
             }
             if (curTime - time_phase2 > 22000 ) {
-                target = new Pose2d(1280, -680, -44);
+                target = new Pose2d(1280, -640, -45);
             }
             if (curTime - time_phase2 > 29500 ) {
                 target = new Pose2d(1900, 0, 0);
@@ -234,7 +234,7 @@ public class ApexTeamAutoModeRedNearFaster extends LinearOpMode {
 
     private double calculateShooterFactor(double batteryVoltage) {
         double slope = -0.042857142857;     // derived from calibration
-        double intercept = 0.94;  // derived from calibration
+        double intercept = 0.955;  // derived from calibration
 
         double factor = slope * batteryVoltage + intercept;
 

@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.apex.warrior.auto.config.BlueNearServoMoto
 import java.util.Locale;
 
 // Apex Team main Autonomous Mode
-@Autonomous(name = "Auto Drive - Blue Team - Near to goal", group = "Auto Opmode")
+//@Autonomous(name = "Auto Drive - Blue Team - Near to goal", group = "Auto Opmode")
 public class ApexTeamAutoModeBlueNear extends LinearOpMode {
     GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
     RobotHardwareConfigurator myRobotHW = new RobotHardwareConfigurator();

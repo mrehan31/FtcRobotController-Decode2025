@@ -149,7 +149,7 @@ public class ApexTeamAutoModeBlueNearFaster extends LinearOpMode {
                 target = new Pose2d(1280, 650, 47); // shooting pos
             }
             if (curTime - time_phase2 > 18000 ) {
-                target = new Pose2d(1900, 300, -90); // second pick
+                target = new Pose2d(1900, 320, -90); // second pick
             }
             if (curTime - time_phase2 > 20500 ) {
                 target = new Pose2d(1900, -500, -90);
@@ -255,7 +255,7 @@ public class ApexTeamAutoModeBlueNearFaster extends LinearOpMode {
 
     private double calculateShooterFactor(double batteryVoltage) {
         double slope = -0.042857142857;     // derived from calibration
-        double intercept = 0.94;  // derived from calibration
+        double intercept = 0.955;  // derived from calibration
 
         double factor = slope * batteryVoltage + intercept;
 

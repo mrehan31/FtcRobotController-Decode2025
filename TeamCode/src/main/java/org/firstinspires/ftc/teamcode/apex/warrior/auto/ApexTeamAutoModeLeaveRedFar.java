@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.apex.warrior.auto.config.BlueFarServoMotor
 import java.util.Locale;
 
 // Apex Team main Autonomous Mode
-@Autonomous(name = "Auto Drive - Leave Red - Far from goal", group = "Auto Opmode")
+//@Autonomous(name = "Auto Drive - Leave Red - Far from goal", group = "Auto Opmode")
 public class ApexTeamAutoModeLeaveRedFar extends LinearOpMode {
     GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
     RobotHardwareConfigurator myRobotHW = new RobotHardwareConfigurator();
@@ -122,7 +122,7 @@ public class ApexTeamAutoModeLeaveRedFar extends LinearOpMode {
             if (curTime - time_phase2 > 9000 ) {
                 target = new Pose2d(-215.0, 45.0, 60.0);
             }
-
+/// /////////////////////////////////
             if (curTime - time_phase2 > 12000 ) {
                 target = new Pose2d(-150, 1100.0, 60.0);
             }
@@ -138,7 +138,7 @@ public class ApexTeamAutoModeLeaveRedFar extends LinearOpMode {
             if (curTime - time_phase2 > 18000 ) {
                 target = new Pose2d(-50.0, 1150, 15);
             }
-
+////////////////////////////////////
             if (curTime - time_phase2 > 18500 ) {
                 target = new Pose2d(-215.0, 45.0, -21.2);
             }
