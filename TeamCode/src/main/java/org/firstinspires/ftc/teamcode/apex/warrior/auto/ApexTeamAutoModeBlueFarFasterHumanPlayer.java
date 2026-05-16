@@ -244,7 +244,7 @@ public class ApexTeamAutoModeBlueFarFasterHumanPlayer extends LinearOpMode {
     private double calculateShooterFactor(double batteryVoltage) {
         double slope = -0.0307692307;      // derived from calibration points
         //double intercept = 0.8615384607;   // derived from calibration points
-        double intercept = 0.85;   // derived from calibration points
+        double intercept = 0.86;   // derived from calibration points
 
         double factor = slope * batteryVoltage + intercept;
 

@@ -17,20 +17,30 @@ import org.firstinspires.ftc.teamcode.apex.warrior.auto.config.BlueFarDcMotorCon
 import org.firstinspires.ftc.teamcode.apex.warrior.auto.config.BlueFarServoMotorConstant;
 
 import java.util.Locale;
-
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 // Apex Team main Autonomous Mode
 @Autonomous(name = "Auto Drive - Blue Team - Far from goal - Faster", group = "Auto Opmode")
 public class ApexTeamAutoModeBlueFarFaster extends LinearOpMode {
     GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
     RobotHardwareConfigurator myRobotHW = new RobotHardwareConfigurator();
-    private double shooterDCMotorPowerScaleFactor = 0.45;
+    private double shooterDCMotorPowerScaleFactor = 0.10375;
     private boolean stopperButtonStateForFirstTime = false;
     private DcMotor frontLeftChassisDC;
     private DcMotor frontRightChassisDC;
     private DcMotor backLeftChassisDC;
     private DcMotor backRightChassisDC;
-    private DcMotor leftShooterDC;
-    private DcMotor rightShooterDC;
+//    private DcMotor leftShooterDC;
+//    private DcMotor rightShooterDC;
+// Change these from DcMotor to DcMotorEx
+    private DcMotorEx leftShooterDC;
+    private DcMotorEx rightShooterDC;
+
+    // Add your max ticks constant
+    private static final double MAX_SHOOTER_TICKS_PER_SEC = 2800.0;
+
+    // You can change your scale factor to represent the percentage of max velocity you want in Auto
+
     private DcMotor transferMechDC;
     private DcMotor intakeMechDC;
     private Servo shooterMechRotatorServo;
@@ -55,9 +65,9 @@ public class ApexTeamAutoModeBlueFarFaster extends LinearOpMode {
 
         double batteryVoltage = getBatteryVoltage();
         telemetry.addData("Battery Voltage", "%.2f volts", batteryVoltage);
-        shooterDCMotorPowerScaleFactor = calculateShooterFactor(batteryVoltage);
-        telemetry.addData("Shooting factor", "%.2f volts", shooterDCMotorPowerScaleFactor);
-        telemetry.addData(">", "Robot Ready.  Press Play.");
+//        shooterDCMotorPowerScaleFactor = calculateShooterFactor(batteryVoltage);
+//        telemetry.addData("Shooting factor", "%.2f volts", shooterDCMotorPowerScaleFactor);
+//        telemetry.addData(">", "Robot Ready.  Press Play.");
         telemetry.update();
 
         waitForStart();
@@ -238,7 +248,7 @@ public class ApexTeamAutoModeBlueFarFaster extends LinearOpMode {
     private double calculateShooterFactor(double batteryVoltage) {
         double slope = -0.0307692307;      // derived from calibration points
         //double intercept = 0.8615384607;   // derived from calibration points
-        double intercept = 0.85;   // derived from calibration points
+        double intercept = 0.87;   // derived from calibration points
 
         double factor = slope * batteryVoltage + intercept;
 
@@ -291,21 +301,34 @@ public class ApexTeamAutoModeBlueFarFaster extends LinearOpMode {
     private void initiateOtherDCMotors() {
         telemetry.addData("DcMotor initiateOtherDCMotors:", "Configuration Started");
 
-        leftShooterDC = myRobotHW.getLeftShooterDC();
-        rightShooterDC = myRobotHW.getRightShooterDC();
+//        leftShooterDC = myRobotHW.getLeftShooterDC();
+//        rightShooterDC = myRobotHW.getRightShooterDC();
+        leftShooterDC = (DcMotorEx) myRobotHW.getLeftShooterDC();
+        rightShooterDC = (DcMotorEx) myRobotHW.getRightShooterDC();
+
+        leftShooterDC.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightShooterDC.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+// Use the exact same tuned coefficients you found worked in TeleOp
+        PIDFCoefficients flywheelPIDF = new PIDFCoefficients(1.5, 0.0, 0, 50);
+
+        leftShooterDC.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, flywheelPIDF);
+        rightShooterDC.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, flywheelPIDF);
+
+
         transferMechDC = myRobotHW.getTransferMechDC();
         intakeMechDC = myRobotHW.getIntakeMechDC();
 
         leftShooterDC.setDirection(DcMotorSimple.Direction.FORWARD);
         telemetry.addData("DcMotor DirectionLeftShooter", leftShooterDC.getDirection());
-        leftShooterDC.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        telemetry.addData("DcMotor ModeLeftShooter:", leftShooterDC.getCurrentPosition());
+//        leftShooterDC.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        telemetry.addData("DcMotor ModeLeftShooter:", leftShooterDC.getCurrentPosition());
 
 
         rightShooterDC.setDirection(DcMotorSimple.Direction.FORWARD);
         telemetry.addData("DcMotor DirectionRightShooter", rightShooterDC.getDirection());
-        rightShooterDC.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        telemetry.addData("DcMotor ModeRightShooter:", rightShooterDC.getCurrentPosition());
+//        rightShooterDC.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        telemetry.addData("DcMotor ModeRightShooter:", rightShooterDC.getCurrentPosition());
 
         transferMechDC.setDirection(DcMotorSimple.Direction.FORWARD);
         telemetry.addData("DcMotor DirectionTransferMech", transferMechDC.getDirection());
@@ -350,15 +373,28 @@ public class ApexTeamAutoModeBlueFarFaster extends LinearOpMode {
     }
 
     // Function to give scaled power to both shooter DC motors(opposite rotation)
+//    private void startShooterDCMotors() {
+//        // Ensure shooterDCPowerScale stays between 0 and 1
+//        leftShooterDC.setPower(shooterDCMotorPowerScaleFactor);
+//        rightShooterDC.setPower(shooterDCMotorPowerScaleFactor);
+//        telemetry.addData("DcMotor shooterDCPowerScale", shooterDCMotorPowerScaleFactor);
+//        telemetry.addData("DcMotor LeftShooter Power", leftShooterDC.getPower());
+//        telemetry.addData("DcMotor RightShooter Power", rightShooterDC.getPower());
+//        telemetry.update();
+//    }
     private void startShooterDCMotors() {
-        // Ensure shooterDCPowerScale stays between 0 and 1
-        leftShooterDC.setPower(shooterDCMotorPowerScaleFactor);
-        rightShooterDC.setPower(shooterDCMotorPowerScaleFactor);
-        telemetry.addData("DcMotor shooterDCPowerScale", shooterDCMotorPowerScaleFactor);
-        telemetry.addData("DcMotor LeftShooter Power", leftShooterDC.getPower());
-        telemetry.addData("DcMotor RightShooter Power", rightShooterDC.getPower());
+        // Calculate the target velocity based on your scale factor (e.g., 0.45 * 2800)
+        double targetVelocity = shooterDCMotorPowerScaleFactor * MAX_SHOOTER_TICKS_PER_SEC;
+
+        leftShooterDC.setVelocity(targetVelocity);
+        rightShooterDC.setVelocity(targetVelocity);
+
+        telemetry.addData("Target Velocity", targetVelocity);
+        telemetry.addData("Left Vel", leftShooterDC.getVelocity());
+        telemetry.addData("Right Vel", rightShooterDC.getVelocity());
         telemetry.update();
     }
+
 
     // Function to run Transfer DC Motor at scaled power
     private void runTransferMechDCMotor() {
@@ -434,7 +470,12 @@ public class ApexTeamAutoModeBlueFarFaster extends LinearOpMode {
     }
 
     // Function to stop both shooter DC motors (idle)
+//    private void stopShooterDCMotors() {
+//        leftShooterDC.setPower(0);
+//        rightShooterDC.setPower(0);
+//    }
     private void stopShooterDCMotors() {
+        // Cut raw power to allow the heavy flywheels to coast safely
         leftShooterDC.setPower(0);
         rightShooterDC.setPower(0);
     }

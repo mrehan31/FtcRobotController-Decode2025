@@ -16,6 +16,20 @@ public class ServoMotorConstant {
     public static final double FEEDER_SERVO_POS_0_DEG = 0.015;   // represents 0 degrees
     public static final double FEEDER_SERVO_POS_120_DEG = 0.1; // approx 120 degrees on a 5-turn servo
 
-    public static final double STOPPER_SERVO_POS_INITIAL_GATE = 0.59;
-    public static final double STOPPER_SERVO_POS_OPEN_GATE = 0.58;
+//    public static final double STOPPER_SERVO_POS_INITIAL_GATE = 0.59;
+//    public static final double STOPPER_SERVO_POS_OPEN_GATE = 0.58;
+    public static final double STOPPER_SERVO_POS_INITIAL_GATE = 0.57;
+    public static final double STOPPER_SERVO_POS_OPEN_GATE = 0.54;
 }
+
+
+
+
+
+
+
+
+
+
+
+

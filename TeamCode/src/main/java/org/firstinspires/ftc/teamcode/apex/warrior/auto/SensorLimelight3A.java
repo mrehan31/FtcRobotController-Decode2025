@@ -32,6 +32,8 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode.apex.warrior.auto;
 
+import static java.lang.Math.abs;
+
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.LLStatus;
@@ -41,6 +43,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
+import com.qualcomm.robotcore.hardware.PwmControl;
 
 import java.util.List;
 
@@ -71,6 +75,7 @@ import java.util.List;
 public class SensorLimelight3A extends LinearOpMode {
 
     private Limelight3A limelight;
+    private ServoImplEx indicatorLight;
 
     @Override
     public void runOpMode() throws InterruptedException
@@ -85,7 +90,12 @@ public class SensorLimelight3A extends LinearOpMode {
          * Starts polling for data.  If you neglect to call start(), getLatestResult() will return null.
          */
         limelight.start();
+        indicatorLight = hardwareMap.get(ServoImplEx.class, "indicator_light");
 
+        // Force the PWM range to 500-2500µs so 0.0 and 1.0 map correctly
+        indicatorLight.setPwmRange(new PwmControl.PwmRange(500, 2500));
+
+        telemetry.addLine("RGB Indicator Initialized.");
         telemetry.addData(">", "Robot Ready.  Press Play.");
         telemetry.update();
         waitForStart();
@@ -102,6 +112,7 @@ public class SensorLimelight3A extends LinearOpMode {
             LLResult result = limelight.getLatestResult();
             if (result.isValid()) {
                 // Access general information
+                indicatorLight.setPwmEnable();
                 Pose3D botpose = result.getBotpose();
                 double captureLatency = result.getCaptureLatency();
                 double targetingLatency = result.getTargetingLatency();
@@ -139,6 +150,13 @@ public class SensorLimelight3A extends LinearOpMode {
                 List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
                 for (LLResultTypes.FiducialResult fr : fiducialResults) {
                     telemetry.addData("Fiducial", "ID: %d, Family: %s, X: %.2f, Y: %.2f", fr.getFiducialId(), fr.getFamily(), fr.getTargetXDegrees(), fr.getTargetYDegrees());
+                    if(fr.getTargetXDegrees() < 5 && fr.getTargetXDegrees() > -5){
+                        indicatorLight.setPosition(0.5);
+                    }
+                    if(fr.getTargetXDegrees() >= 5)
+                        indicatorLight.setPosition(0.7);
+                    if(fr.getTargetXDegrees() < -5)
+                        indicatorLight.setPosition(0.32);
                 }
 
                 // Access color results
@@ -147,6 +165,7 @@ public class SensorLimelight3A extends LinearOpMode {
                     telemetry.addData("Color", "X: %.2f, Y: %.2f", cr.getTargetXDegrees(), cr.getTargetYDegrees());
                 }
             } else {
+                indicatorLight.setPwmDisable();
                 telemetry.addData("Limelight", "No data available");
             }
 
