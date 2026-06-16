@@ -24,7 +24,8 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 public class ApexTeamAutoModeBlueFarFaster extends LinearOpMode {
     GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
     RobotHardwareConfigurator myRobotHW = new RobotHardwareConfigurator();
-    private double shooterDCMotorPowerScaleFactor = 0.10375;
+//    private double shooterDCMotorPowerScaleFactor = 0.10375;
+    private double shooterDCMotorPowerScaleFactor = 0.102;
     private boolean stopperButtonStateForFirstTime = false;
     private DcMotor frontLeftChassisDC;
     private DcMotor frontRightChassisDC;
@@ -65,9 +66,9 @@ public class ApexTeamAutoModeBlueFarFaster extends LinearOpMode {
 
         double batteryVoltage = getBatteryVoltage();
         telemetry.addData("Battery Voltage", "%.2f volts", batteryVoltage);
-//        shooterDCMotorPowerScaleFactor = calculateShooterFactor(batteryVoltage);
-//        telemetry.addData("Shooting factor", "%.2f volts", shooterDCMotorPowerScaleFactor);
-//        telemetry.addData(">", "Robot Ready.  Press Play.");
+        shooterDCMotorPowerScaleFactor = calculateShooterFactor(batteryVoltage);
+        telemetry.addData("Shooting factor", "%.5f volts", shooterDCMotorPowerScaleFactor);
+        telemetry.addData(">", "Robot Ready.  Press Play.");
         telemetry.update();
 
         waitForStart();
@@ -246,16 +247,16 @@ public class ApexTeamAutoModeBlueFarFaster extends LinearOpMode {
     }
 
     private double calculateShooterFactor(double batteryVoltage) {
-        double slope = -0.0307692307;      // derived from calibration points
-        //double intercept = 0.8615384607;   // derived from calibration points
-        double intercept = 0.87;   // derived from calibration points
+        // Derived from calibration points: (14.5, 0.095) and (12.0, 0.104)
+        // Slope (m) = -0.0036, Intercept (b) = 0.1472
+        double slope = -0.0036;
+        double intercept = 0.1472;
 
         double factor = slope * batteryVoltage + intercept;
 
-        // Optional: clamp to safe range
+        // Clamp to safe range [0.0, 1.0]
         return Math.max(0.0, Math.min(1.0, factor));
     }
-
     private void initMotorAndServo() {
         initiateChassisDCMotors();
         initiateOtherDCMotors();
