@@ -157,6 +157,7 @@ public class ApexTeamAutoModeBlueNearFaster extends LinearOpMode {
             if (curTime - time_phase2 > 18000 ) {
                 target = new Pose2d(1900, 320, -90); // second pick
             }
+
             if (curTime - time_phase2 > 20500 ) {
                 target = new Pose2d(1900, -500, -90);
             }
